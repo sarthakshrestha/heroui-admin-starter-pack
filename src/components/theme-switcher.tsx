@@ -5,7 +5,7 @@ export default function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex items-start justify-start gap-2 mt-2 mb-4">
+    <div className="flex items-start justify-start gap-2 mt-2 mb-2">
       <button
         aria-label="Light mode"
         className={`p-2 rounded-full transition ${
@@ -14,7 +14,7 @@ export default function ThemeSwitcher() {
         type="button"
         onClick={() => setTheme("light")}
       >
-        <Icon icon="solar:sun-2-bold" width={18} />
+        <Icon icon="solar:sun-2-bold" width={12} />
       </button>
       <button
         aria-label="Dark mode"
@@ -24,7 +24,7 @@ export default function ThemeSwitcher() {
         type="button"
         onClick={() => setTheme("dark")}
       >
-        <Icon icon="solar:moon-bold" width={18} />
+        <Icon icon="solar:moon-bold" width={12} />
       </button>
     </div>
   );
