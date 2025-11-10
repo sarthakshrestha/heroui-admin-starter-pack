@@ -34,7 +34,7 @@ const navItems = [
 
 export default function Sidebar() {
   return (
-    <aside className="h-screen w-64 bg-content1 border-r border-divider flex flex-col">
+    <aside className="min-h-screen w-64 bg-content1 border-r border-divider flex flex-col">
       <div className="flex items-center gap-2 px-6 py-5">
         <Icon className="text-primary" icon="solar:clothes-2-bold" width={32} />
         <span className="font-bold text-2xl tracking-tight text-default-700">
@@ -92,7 +92,6 @@ export default function Sidebar() {
         </Accordion>
       </nav>
       <div className="px-4 py-4">
-        <ThemeSwitcher />
         <Popover placement="top-start">
           <PopoverTrigger>
             <div className="flex items-center gap-3 cursor-pointer rounded-medium px-2 py-2 hover:bg-default-100 transition">
@@ -125,6 +124,7 @@ export default function Sidebar() {
             </Button>
           </PopoverContent>
         </Popover>
+        <ThemeSwitcher />
       </div>
     </aside>
   );
