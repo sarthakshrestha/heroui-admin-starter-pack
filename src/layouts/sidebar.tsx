@@ -11,6 +11,8 @@ import {
 import { Icon } from "@iconify/react";
 import { Avatar } from "@heroui/avatar";
 
+import ThemeSwitcher from "@/components/theme-switcher";
+
 const navItems = [
   { label: "Dashboard", icon: "solar:home-2-bold", href: "/" },
   { label: "Orders", icon: "solar:layers-bold", href: "/orders" },
@@ -90,6 +92,7 @@ export default function Sidebar() {
         </Accordion>
       </nav>
       <div className="px-4 py-4">
+        <ThemeSwitcher />
         <Popover placement="top-start">
           <PopoverTrigger>
             <div className="flex items-center gap-3 cursor-pointer rounded-medium px-2 py-2 hover:bg-default-100 transition">
