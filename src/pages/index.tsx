@@ -19,12 +19,12 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="rounded-large bg-content1 flex w-full max-w-sm flex-col gap-4 px-8 pt-6 pb-10">
+      <div className="rounded-large bg-content1 flex w-full max-w-sm flex-col gap-4 px-8 pt-6 pb-9">
         <div className="flex flex-col gap-1">
-          <h2 className="text-primary text-xl text-center">
+          <h2 className="text-default-800 text-2xl text-left font-medium tracking-tight">
             Log in to your account
           </h2>
-          <p className="text-small text-default-500 text-center">
+          <p className="text-small text-default-500 text-left">
             Please enter your details
           </p>
         </div>
