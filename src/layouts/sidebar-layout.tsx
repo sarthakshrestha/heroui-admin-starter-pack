@@ -39,8 +39,10 @@ export default function SidebarLayout({
       {/* Sidebar drawer for mobile */}
       <div
         aria-hidden={!open}
-        className={`fixed inset-0 z-40 transition-transform duration-300 bg-black/40 md:hidden ${
-          open ? "translate-x-0" : "-translate-x-full pointer-events-none"
+        className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ease-in-out ${
+          open
+            ? "opacity-100 pointer-events-auto backdrop-blur-sm"
+            : "opacity-0 pointer-events-none"
         }`}
         role="button"
         tabIndex={0}
@@ -51,9 +53,9 @@ export default function SidebarLayout({
         }}
       >
         <div
-          className={`h-full w-64 bg-content1 border-r border-divider flex flex-col transition-transform duration-300 ${
-            open ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`h-full w-64 bg-content1 border-r border-divider flex flex-col transition-all duration-300 ease-in-out
+      ${open ? "translate-x-0" : "-translate-x-8"}
+    `}
           role="presentation"
           onClick={(e) => e.stopPropagation()}
         >
