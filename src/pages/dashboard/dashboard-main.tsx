@@ -10,7 +10,9 @@ function DashboardMain() {
     <SidebarLayout title="Dashboard">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
         <div>
-          <h1 className="text-xl font-medium">Welcome back, Admin</h1>
+          <h1 className="text-2xl font-medium text-default-700">
+            Welcome back, Admin
+          </h1>
           <p className="text-foreground">
             Track, manage and forecast your customers and orders.
           </p>

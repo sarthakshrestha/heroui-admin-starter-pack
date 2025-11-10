@@ -65,7 +65,13 @@ export default function Sidebar() {
               <AccordionItem
                 key={item.label}
                 aria-label={item.label}
-                startContent={<Icon icon={item.icon} width={22} />}
+                startContent={
+                  <Icon
+                    className="text-default-700"
+                    icon={item.icon}
+                    width={22}
+                  />
+                }
                 title={item.label}
               >
                 <div className="flex flex-col gap-2">

@@ -29,7 +29,7 @@ export default function SidebarLayout({
   }, []);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-background dark:bg-black">
       {/* Sidebar for desktop */}
       <div
         className={`${collapsed ? "w-0" : "w-64"} transition-all duration-300 hidden md:block`}
