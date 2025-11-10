@@ -119,7 +119,7 @@ const KpiCards = () => {
               </div>
             </div>
             {/* Chart outside the padded div */}
-            <div className="h-16 -my-2 w-full">
+            <div className="h-16 w-full">
               <ResponsiveContainer height="100%" width="100%">
                 <LineChart data={kpi.data}>
                   <Line
