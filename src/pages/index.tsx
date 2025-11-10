@@ -44,6 +44,7 @@ export default function Login() {
           />
           <Input
             isRequired
+            className="text-default-700"
             endContent={
               <button type="button" onClick={toggleVisibility}>
                 {isVisible ? (
