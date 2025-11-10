@@ -12,7 +12,7 @@ function DashboardMain() {
     <SidebarLayout title="Dashboard">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
         <div>
-          <h1 className="text-2xl font-medium text-default-700">
+          <h1 className="text-2xl font-medium text-default-700 mb-1">
             Welcome back, Admin
           </h1>
           <p className="text-foreground">

@@ -64,7 +64,7 @@ export default function SidebarLayout({
       </div>
       <div className="flex-1 w-full flex flex-col bg-content1">
         {/* Header */}
-        <header className="flex items-center gap-4 px-4 py-4 sticky border-divider border-b top-0 z-10">
+        <header className="flex bg-content1 items-center gap-4 px-4 py-4 sticky border-divider border-b top-0 z-10">
           <div className="flex flex-col flex-1 min-w-0">
             {breadcrumbs && (
               <Breadcrumbs className="mb-1">

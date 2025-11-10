@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Table,
   TableHeader,
@@ -7,8 +8,16 @@ import {
   TableCell,
   Chip,
   Button,
+  Input,
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+  Pagination,
+  Progress,
+  Selection,
+  SortDescriptor,
 } from "@heroui/react";
-import { Progress } from "@heroui/progress";
 import { Icon } from "@iconify/react";
 
 // Table columns
@@ -72,15 +81,425 @@ const expectationColorMap: Record<string, "success" | "danger"> = {
   Delayed: "danger",
 };
 
+const fillOptions = [
+  { name: "Full", uid: "Full" },
+  { name: "Partial", uid: "Partial" },
+];
+
+const expectationOptions = [
+  { name: "On Time", uid: "On Time" },
+  { name: "Delayed", uid: "Delayed" },
+];
+
+const INITIAL_VISIBLE_COLUMNS = [
+  "stockCode",
+  "customerName",
+  "recommendationScore",
+  "priorityScore",
+  "fill",
+  "expectation",
+  "actions",
+];
+
+export function capitalize(s: string) {
+  return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
+}
+
+const SearchIcon = (props: any) => {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      focusable="false"
+      height="1em"
+      role="presentation"
+      viewBox="0 0 24 24"
+      width="1em"
+      {...props}
+    >
+      <path
+        d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+      <path
+        d="M22 22L20 20"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+};
+
+const ChevronDownIcon = ({ strokeWidth = 1.5, ...otherProps }: any) => {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      focusable="false"
+      height="1em"
+      role="presentation"
+      viewBox="0 0 24 24"
+      width="1em"
+      {...otherProps}
+    >
+      <path
+        d="m19.92 8.95-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit={10}
+        strokeWidth={strokeWidth}
+      />
+    </svg>
+  );
+};
+
 export default function OrderTable() {
+  const [filterValue, setFilterValue] = React.useState("");
+  const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
+    new Set([])
+  );
+  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
+    new Set(INITIAL_VISIBLE_COLUMNS)
+  );
+  const [fillFilter, setFillFilter] = React.useState<Selection>("all");
+  const [expectationFilter, setExpectationFilter] =
+    React.useState<Selection>("all");
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
+    column: "recommendationScore",
+    direction: "ascending",
+  });
+  const [page, setPage] = React.useState(1);
+
+  const hasSearchFilter = Boolean(filterValue);
+
+  const headerColumns = React.useMemo(() => {
+    if (visibleColumns === "all") return columns;
+
+    return columns.filter((column) =>
+      Array.from(visibleColumns as Set<string>).includes(column.uid)
+    );
+  }, [visibleColumns]);
+
+  const filteredItems = React.useMemo(() => {
+    let filteredOrders = [...orders];
+
+    if (hasSearchFilter) {
+      filteredOrders = filteredOrders.filter(
+        (order) =>
+          order.customerName
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          order.stockCode.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
+    if (
+      fillFilter !== "all" &&
+      Array.from(fillFilter as Set<string>).length !== fillOptions.length
+    ) {
+      filteredOrders = filteredOrders.filter((order) =>
+        Array.from(fillFilter as Set<string>).includes(order.fill)
+      );
+    }
+    if (
+      expectationFilter !== "all" &&
+      Array.from(expectationFilter as Set<string>).length !==
+        expectationOptions.length
+    ) {
+      filteredOrders = filteredOrders.filter((order) =>
+        Array.from(expectationFilter as Set<string>).includes(order.expectation)
+      );
+    }
+
+    return filteredOrders;
+  }, [orders, filterValue, fillFilter, expectationFilter]);
+
+  const pages = Math.ceil(filteredItems.length / rowsPerPage) || 1;
+
+  const items = React.useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    return filteredItems.slice(start, end);
+  }, [page, filteredItems, rowsPerPage]);
+
+  const sortedItems = React.useMemo(() => {
+    return [...items].sort((a, b) => {
+      const first = a[sortDescriptor.column as keyof typeof a];
+      const second = b[sortDescriptor.column as keyof typeof b];
+      const cmp = first < second ? -1 : first > second ? 1 : 0;
+
+      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+    });
+  }, [sortDescriptor, items]);
+
+  const renderCell = React.useCallback(
+    (order: (typeof orders)[0], columnKey: React.Key) => {
+      const cellValue = order[columnKey as keyof typeof order];
+
+      switch (columnKey as string) {
+        case "stockCode":
+          return cellValue;
+        case "customerName":
+          return cellValue;
+        case "recommendationScore":
+          return (
+            <Chip color="primary" variant="flat">
+              {cellValue}
+            </Chip>
+          );
+        case "priorityScore":
+          return (
+            <Chip color="secondary" variant="flat">
+              {cellValue}
+            </Chip>
+          );
+        case "fill":
+          return (
+            <Progress
+              aria-label="Fill"
+              className="w-20"
+              color={fillColorMap[order.fill]}
+              value={order.fill === "Full" ? 100 : 50}
+            />
+          );
+        case "expectation":
+          return (
+            <Chip
+              color={
+                expectationColorMap[
+                  order.expectation as keyof typeof expectationColorMap
+                ] || "default"
+              }
+              variant="flat"
+            >
+              {cellValue}
+            </Chip>
+          );
+        case "actions":
+          return (
+            <Button isIconOnly size="sm" variant="light">
+              <Icon icon="ic:round-chevron-right" width={18} />
+            </Button>
+          );
+        default:
+          return cellValue;
+      }
+    },
+    []
+  );
+
+  const onNextPage = React.useCallback(() => {
+    if (page < pages) {
+      setPage(page + 1);
+    }
+  }, [page, pages]);
+
+  const onPreviousPage = React.useCallback(() => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  }, [page]);
+
+  const onRowsPerPageChange = React.useCallback((e: any) => {
+    setRowsPerPage(Number(e.target.value));
+    setPage(1);
+  }, []);
+
+  const onSearchChange = React.useCallback((value: string) => {
+    if (value) {
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
+  const onClear = React.useCallback(() => {
+    setFilterValue("");
+    setPage(1);
+  }, []);
+
+  const topContent = React.useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-3 items-end">
+          <Input
+            isClearable
+            className="w-full sm:max-w-[44%]"
+            placeholder="Search by customer name or stock code..."
+            startContent={<SearchIcon />}
+            value={filterValue}
+            onClear={() => onClear()}
+            onValueChange={onSearchChange}
+          />
+          <div className="flex gap-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<ChevronDownIcon className="text-small" />}
+                  variant="flat"
+                >
+                  Fill
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Fill Filter"
+                closeOnSelect={false}
+                selectedKeys={fillFilter}
+                selectionMode="multiple"
+                onSelectionChange={setFillFilter}
+              >
+                {fillOptions.map((fill) => (
+                  <DropdownItem key={fill.uid} className="capitalize">
+                    {capitalize(fill.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<ChevronDownIcon className="text-small" />}
+                  variant="flat"
+                >
+                  Expectation
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Expectation Filter"
+                closeOnSelect={false}
+                selectedKeys={expectationFilter}
+                selectionMode="multiple"
+                onSelectionChange={setExpectationFilter}
+              >
+                {expectationOptions.map((expectation) => (
+                  <DropdownItem key={expectation.uid} className="capitalize">
+                    {capitalize(expectation.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<ChevronDownIcon className="text-small" />}
+                  variant="flat"
+                >
+                  Columns
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {capitalize(column.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-default-400 text-small">
+            Total {orders.length} orders
+          </span>
+          <label className="flex items-center text-default-400 text-small">
+            Rows per page:
+            <select
+              className="bg-transparent outline-solid outline-transparent text-default-400 text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    );
+  }, [
+    filterValue,
+    fillFilter,
+    expectationFilter,
+    visibleColumns,
+    onRowsPerPageChange,
+    orders.length,
+    onSearchChange,
+    hasSearchFilter,
+  ]);
+
+  const bottomContent = React.useMemo(() => {
+    return (
+      <div className="py-2 px-2 flex justify-between items-center">
+        <span className="w-[30%] text-small text-default-400">
+          {selectedKeys === "all"
+            ? "All items selected"
+            : `${(selectedKeys as Set<string>).size} of ${filteredItems.length} selected`}
+        </span>
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          color="primary"
+          page={page}
+          total={pages}
+          onChange={setPage}
+        />
+        <div className="hidden sm:flex w-[30%] justify-end gap-2">
+          <Button
+            isDisabled={pages === 1}
+            size="sm"
+            variant="flat"
+            onPress={onPreviousPage}
+          >
+            Previous
+          </Button>
+          <Button
+            isDisabled={pages === 1}
+            size="sm"
+            variant="flat"
+            onPress={onNextPage}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    );
+  }, [selectedKeys, filteredItems.length, page, pages, hasSearchFilter]);
+
   return (
     <Table
+      isHeaderSticky
       aria-label="Order Table"
+      bottomContent={bottomContent}
+      bottomContentPlacement="outside"
       classNames={{
         wrapper: "max-h-[420px]",
       }}
+      selectedKeys={selectedKeys}
+      selectionMode="multiple"
+      sortDescriptor={sortDescriptor}
+      topContent={topContent}
+      topContentPlacement="outside"
+      onSelectionChange={setSelectedKeys}
+      onSortChange={setSortDescriptor}
     >
-      <TableHeader columns={columns}>
+      <TableHeader columns={headerColumns}>
         {(column) => (
           <TableColumn
             key={column.uid}
@@ -91,46 +510,12 @@ export default function OrderTable() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody className="text-default-700" items={orders}>
-        {(order) => (
-          <TableRow key={order.id} className="text-default-700">
-            <TableCell>{order.stockCode}</TableCell>
-            <TableCell>{order.customerName}</TableCell>
-            <TableCell>
-              <Chip color="primary" variant="flat">
-                {order.recommendationScore}
-              </Chip>
-            </TableCell>
-            <TableCell>
-              <Chip color="secondary" variant="flat">
-                {order.priorityScore}
-              </Chip>
-            </TableCell>
-            <TableCell>
-              <Progress
-                aria-label="Fill"
-                className="w-20"
-                color={fillColorMap[order.fill]}
-                value={order.fill === "Full" ? 100 : 50}
-              />
-            </TableCell>
-            <TableCell>
-              <Chip
-                color={
-                  expectationColorMap[
-                    order.expectation as keyof typeof expectationColorMap
-                  ] || "default"
-                }
-                variant="flat"
-              >
-                {order.expectation}
-              </Chip>
-            </TableCell>
-            <TableCell>
-              <Button isIconOnly size="sm" variant="light">
-                <Icon icon="solar:eye-bold" width={18} />
-              </Button>
-            </TableCell>
+      <TableBody emptyContent={"No orders found"} items={sortedItems}>
+        {(item) => (
+          <TableRow key={item.id}>
+            {(columnKey) => (
+              <TableCell>{renderCell(item, columnKey)}</TableCell>
+            )}
           </TableRow>
         )}
       </TableBody>
