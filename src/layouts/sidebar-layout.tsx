@@ -3,7 +3,6 @@ import { Button, Breadcrumbs, BreadcrumbItem, Tooltip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 import Sidebar from "./sidebar";
-import ThemeSwitcher from "@/components/theme-switcher";
 
 export default function SidebarLayout({
   children,
