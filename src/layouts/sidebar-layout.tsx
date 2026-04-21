@@ -1,5 +1,11 @@
 import React from "react";
-import { Button, Breadcrumbs, BreadcrumbsItem, Tooltip } from "@heroui/react";
+import { 
+  Button, 
+  Breadcrumbs, 
+  BreadcrumbsItem, 
+  Tooltip, 
+  Drawer 
+} from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 import Sidebar from "./sidebar";
@@ -16,118 +22,77 @@ export default function SidebarLayout({
   const [open, setOpen] = React.useState(false);
   const [collapsed, setCollapsed] = React.useState(false);
 
-  React.useEffect(() => {
-    function handleSidebarToggle() {
-      setOpen(false);
-    }
-
-    window.addEventListener("sidebar-toggle", handleSidebarToggle);
-
-    return () => {
-      window.removeEventListener("sidebar-toggle", handleSidebarToggle);
-    };
-  }, []);
-
   return (
-    <div className="flex min-h-screen bg-background dark:bg-black">
+    <div className="flex min-h-screen bg-background">
       {/* Sidebar for desktop */}
-      <div
-        className={`${collapsed ? "w-0" : "w-64"} transition-all duration-300 hidden md:block`}
-      >
-        {!collapsed && <Sidebar />}
-      </div>
-      {/* Sidebar drawer for mobile */}
-      <div
-        aria-hidden={!open}
-        className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ease-in-out ${
-          open
-            ? "opacity-100 pointer-events-auto backdrop-blur-sm"
-            : "opacity-0 pointer-events-none"
+      <aside
+        className={`hidden md:flex flex-col bg-content1 border-r border-divider transition-[width] duration-300 ease-in-out ${
+          collapsed ? "w-0 overflow-hidden" : "w-64"
         }`}
-        role="button"
-        tabIndex={0}
-        onClick={() => setOpen(false)}
-        onKeyDown={(e) => {
-          if (e.key === "Escape" || e.key === "Enter" || e.key === " ")
-            setOpen(false);
-        }}
       >
-        <div
-          className={`h-full w-64 bg-content1 border-r border-divider flex flex-col transition-all duration-300 ease-in-out
-      ${open ? "translate-x-0" : "-translate-x-8"}
-    `}
-          role="presentation"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="w-64 h-full"> 
           <Sidebar />
         </div>
-      </div>
-      <div className="flex-1 w-full flex flex-col bg-content1">
+      </aside>
+
+      {/* Sidebar drawer for mobile */}
+      <Drawer isOpen={open} onOpenChange={setOpen}>
+        <Drawer.Backdrop />
+        <Drawer.Content placement="left" className="p-0 max-w-[280px]">
+          <Drawer.Dialog className="h-full bg-content1">
+            <Sidebar />
+          </Drawer.Dialog>
+        </Drawer.Content>
+      </Drawer>
+
+      <div className="flex-1 flex flex-col min-w-0 bg-background overflow-hidden">
         {/* Header */}
-        <header className="flex bg-content1 items-center gap-4 px-4 py-4 sticky border-divider border-b top-0 z-10">
-          <div className="flex flex-col flex-1 min-w-0 ">
-            {breadcrumbs && (
-              <Breadcrumbs className="mb-1">
-                {breadcrumbs.map((item) => (
-                  <BreadcrumbsItem key={item.label} href={item.href}>
-                    {item.label}
-                  </BreadcrumbsItem>
-                ))}
-              </Breadcrumbs>
-            )}
-            <div className="flex items-center gap-2">
-              <Tooltip>
-                <Tooltip.Trigger>
-                  <Button
-                    isIconOnly
-                    aria-label={
-                      typeof window !== "undefined" && window.innerWidth < 768
-                        ? open
-                          ? "Close sidebar"
-                          : "Open sidebar"
-                        : collapsed
-                          ? "Expand sidebar"
-                          : "Collapse sidebar"
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-divider bg-content1 px-4 sm:px-6">
+          <div className="flex items-center gap-4 min-w-0">
+            <Tooltip>
+              <Tooltip.Trigger>
+                <Button
+                  isIconOnly
+                  variant="ghost"
+                  aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+                  onPress={() => {
+                    const isMobile = window.innerWidth < 768;
+                    if (isMobile) {
+                      setOpen(true);
+                    } else {
+                      setCollapsed((v) => !v);
                     }
-                    variant="ghost"
-                    onClick={() => {
-                      if (
-                        typeof window !== "undefined" &&
-                        window.innerWidth < 768
-                      ) {
-                        setOpen((v) => !v);
-                      } else {
-                        setCollapsed((v) => !v);
-                      }
-                    }}
-                  >
-                    <Icon
-                      icon={
-                        typeof window !== "undefined" && window.innerWidth < 768
-                          ? "solar:sidebar-minimalistic-linear"
-                          : collapsed
-                            ? "solar:sidebar-minimalistic-linear"
-                            : "solar:sidebar-minimalistic-linear"
-                      }
-                      width={22}
-                    />
-                  </Button>
-                </Tooltip.Trigger>
-                <Tooltip.Content>
-                  {typeof window !== "undefined" && window.innerWidth < 768
-                    ? open
-                      ? "Close sidebar"
-                      : "Open sidebar"
-                    : collapsed
-                      ? "Expand sidebar"
-                      : "Collapse sidebar"}
-                </Tooltip.Content>
-              </Tooltip>
-              {title && <h1 className=" text-default-900 truncate">{title}</h1>}
+                  }}
+                >
+                  <Icon
+                    icon="solar:sidebar-minimalistic-linear"
+                    width={22}
+                    className={`transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`}
+                  />
+                </Button>
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                {collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              </Tooltip.Content>
+            </Tooltip>
+
+            <div className="flex flex-col min-w-0">
+              {breadcrumbs && (
+                <Breadcrumbs className="hidden sm:block">
+                  {breadcrumbs.map((item) => (
+                    <BreadcrumbsItem key={item.label} href={item.href}>
+                      {item.label}
+                    </BreadcrumbsItem>
+                  ))}
+                </Breadcrumbs>
+              )}
+              {title && <h1 className="text-default-900 font-medium truncate">{title}</h1>}
             </div>
           </div>
         </header>
-        <main className="flex-1 w-full px-6 py-4 bg-background">
+
+        {/* Content Area */}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
           {children}
         </main>
       </div>

@@ -263,22 +263,23 @@ export default function OrderTable() {
   }, []);
 
   const topContent = (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-3 items-end">
+    <div className="flex flex-col gap-4 px-2">
+      <div className="flex flex-wrap justify-between gap-3 items-center">
         <TextField aria-label="Search" className="w-full sm:max-w-[44%]">
-          <InputGroup>
+          <InputGroup className="bg-default-100 rounded-xl overflow-hidden border-none shadow-sm">
             <InputGroup.Prefix className="pl-3">
-              <Icon className="text-default-400" icon="solar:magnifer-bold" width={18} />
+              <Icon className="text-default-400" icon="solar:magnifer-bold" width={20} />
             </InputGroup.Prefix>
             <InputGroup.Input
+              className="py-2"
               placeholder="Search by customer name or stock code..."
               value={filterValue}
               onChange={(e) => onSearchChange(e.target.value)}
             />
             {filterValue && (
-              <InputGroup.Suffix>
+              <InputGroup.Suffix className="pr-1">
                 <Button isIconOnly size="sm" variant="ghost" onClick={onClear}>
-                  <Icon icon="ic:round-close" width={18} />
+                  <Icon className="text-default-400" icon="ic:round-close" width={18} />
                 </Button>
               </InputGroup.Suffix>
             )}
@@ -299,19 +300,21 @@ export default function OrderTable() {
                 />
               </Button>
             </Dropdown.Trigger>
-            <Dropdown.Menu
-              disallowEmptySelection
-              aria-label="Fill Filter"
-              selectedKeys={fillFilter}
-              selectionMode="multiple"
-              onSelectionChange={setFillFilter}
-            >
-              {fillOptions.map((fill) => (
-                <Dropdown.Item key={fill.uid} className="capitalize">
-                  {capitalize(fill.name)}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
+            <Dropdown.Popover>
+              <Dropdown.Menu
+                disallowEmptySelection
+                aria-label="Fill Filter"
+                selectedKeys={fillFilter}
+                selectionMode="multiple"
+                onSelectionChange={setFillFilter}
+              >
+                {fillOptions.map((fill) => (
+                  <Dropdown.Item key={fill.uid} id={fill.uid} textValue={fill.name}>
+                    <div className="capitalize">{capitalize(fill.name)}</div>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown.Popover>
           </Dropdown>
           <Dropdown>
             <Dropdown.Trigger>
@@ -327,19 +330,21 @@ export default function OrderTable() {
                 />
               </Button>
             </Dropdown.Trigger>
-            <Dropdown.Menu
-              disallowEmptySelection
-              aria-label="Expectation Filter"
-              selectedKeys={expectationFilter}
-              selectionMode="multiple"
-              onSelectionChange={setExpectationFilter}
-            >
-              {expectationOptions.map((expectation) => (
-                <Dropdown.Item key={expectation.uid} className="capitalize">
-                  {capitalize(expectation.name)}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
+            <Dropdown.Popover>
+              <Dropdown.Menu
+                disallowEmptySelection
+                aria-label="Expectation Filter"
+                selectedKeys={expectationFilter}
+                selectionMode="multiple"
+                onSelectionChange={setExpectationFilter}
+              >
+                {expectationOptions.map((expectation) => (
+                  <Dropdown.Item key={expectation.uid} id={expectation.uid} textValue={expectation.name}>
+                    <div className="capitalize">{capitalize(expectation.name)}</div>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown.Popover>
           </Dropdown>
           <Dropdown>
             <Dropdown.Trigger>
@@ -355,19 +360,21 @@ export default function OrderTable() {
                 />
               </Button>
             </Dropdown.Trigger>
-            <Dropdown.Menu
-              disallowEmptySelection
-              aria-label="Table Columns"
-              selectedKeys={visibleColumns}
-              selectionMode="multiple"
-              onSelectionChange={setVisibleColumns}
-            >
-              {columns.map((column) => (
-                <Dropdown.Item key={column.uid} className="capitalize">
-                  {capitalize(column.name)}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
+            <Dropdown.Popover>
+              <Dropdown.Menu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <Dropdown.Item key={column.uid} id={column.uid} textValue={column.name}>
+                    <div className="capitalize">{capitalize(column.name)}</div>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown.Popover>
           </Dropdown>
         </div>
       </div>
@@ -443,50 +450,52 @@ export default function OrderTable() {
   );
 
   return (
-    <Table className="max-h-[420px]">
+    <div className="flex flex-col gap-4">
       {topContent}
-      <Table.ScrollContainer>
-        <Table.Content
-          aria-label="Order Table"
-          selectedKeys={selectedKeys}
-          selectionMode="multiple"
-          sortDescriptor={sortDescriptor}
-          onSelectionChange={setSelectedKeys}
-          onSortChange={setSortDescriptor}
-        >
-          <Table.Header>
-            <Table.Column>
-              <Checkbox slot="selection" />
-            </Table.Column>
-            {headerColumns.map((column) => (
-              <Table.Column
-                key={column.uid}
-                allowsSorting={column.sortable}
-                className={column.uid === "actions" ? "text-center" : "text-left"}
-              >
-                {column.name}
+      <Table className="max-h-[420px]">
+        <Table.ScrollContainer>
+          <Table.Content
+            aria-label="Order Table"
+            selectedKeys={selectedKeys}
+            selectionMode="multiple"
+            sortDescriptor={sortDescriptor}
+            onSelectionChange={setSelectedKeys}
+            onSortChange={setSortDescriptor}
+          >
+            <Table.Header>
+              <Table.Column>
+                <Checkbox slot="selection" />
               </Table.Column>
-            ))}
-          </Table.Header>
-          <Table.Body renderEmptyState={() => <div className="p-4 text-center">No orders found</div>}>
-            {sortedItems.map((item) => (
-              <Table.Row key={item.id}>
-                <Table.Cell>
-                  <Checkbox slot="selection" />
-                </Table.Cell>
-                {headerColumns.map((column) => (
-                  <Table.Cell key={column.uid} className={column.uid === "actions" ? "text-center" : "text-left"}>
-                    {renderCell(item, column.uid)}
+              {headerColumns.map((column) => (
+                <Table.Column
+                  key={column.uid}
+                  allowsSorting={column.sortable}
+                  className={column.uid === "actions" ? "text-center" : "text-left"}
+                >
+                  {column.name}
+                </Table.Column>
+              ))}
+            </Table.Header>
+            <Table.Body renderEmptyState={() => <div className="p-4 text-center">No orders found</div>}>
+              {sortedItems.map((item) => (
+                <Table.Row id={item.id} key={item.id}>
+                  <Table.Cell>
+                    <Checkbox slot="selection" />
                   </Table.Cell>
-                ))}
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Content>
-      </Table.ScrollContainer>
-      <Table.Footer>
-        {bottomContent}
-      </Table.Footer>
-    </Table>
+                  {headerColumns.map((column) => (
+                    <Table.Cell key={column.uid} className={column.uid === "actions" ? "text-center" : "text-left"}>
+                      {renderCell(item, column.uid)}
+                    </Table.Cell>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+        <Table.Footer>
+          {bottomContent}
+        </Table.Footer>
+      </Table>
+    </div>
   );
 }
