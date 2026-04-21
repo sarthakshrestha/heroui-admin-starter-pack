@@ -1,6 +1,6 @@
 import { Card } from "@heroui/react";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
-import { Icon } from "@iconify/react";
+import { ArrowUpRight, ArrowDownRight } from "@gravity-ui/icons";
 
 interface KpiCardData {
   change: number;
@@ -91,7 +91,7 @@ const KpiCards = () => {
       {kpiData.map((kpi, index) => (
         <Card key={index} className="border-default-200">
           <Card.Content className="p-0">
-            <div className="p-6 flex flex-col gap-1">
+            <div className="p-4 pt-2 pb-2 flex flex-col gap-1">
               {/* Header */}
               <div className="flex flex-col gap-2">
                 <p className="font-medium text-gray-500 text-sm">{kpi.title}</p>
@@ -102,19 +102,15 @@ const KpiCards = () => {
               {/* Change Indicator */}
               <div className="flex items-center gap-1 mt-4">
                 <span
-                  className={`flex items-center gap-1 font-medium text-sm ${
-                    kpi.isPositive ? "text-green-600" : "text-red-600"
-                  }`}
+                  className={`flex items-center gap-1 font-medium text-sm ${kpi.isPositive ? "text-green-600" : "text-red-600"
+                    }`}
                 >
                   {kpi.change}% {kpi.isPositive ? "increase" : "decrease"}
-                  <Icon
-                    icon={
-                      kpi.isPositive
-                        ? "mingcute:trending-up-line"
-                        : "mingcute:trending-down-line"
-                    }
-                    width={16}
-                  />
+                  {kpi.isPositive ? (
+                    <ArrowUpRight width={16} />
+                  ) : (
+                    <ArrowDownRight width={16} />
+                  )}
                 </span>
               </div>
             </div>

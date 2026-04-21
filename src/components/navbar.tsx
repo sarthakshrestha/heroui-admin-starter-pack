@@ -3,21 +3,21 @@ import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  TwitterIcon,
-  GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
-  SearchIcon,
-} from "@/components/icons";
-import { Logo } from "@/components/icons";
+import { 
+  Magnifier, 
+  LogoTelegram as LogoTwitter, 
+  LogoGithub, 
+  LogoFacebook as LogoDiscord, 
+  Heart,
+  Cpu as LogoIcon
+} from "@gravity-ui/icons";
 
 export const Navbar = () => {
   const searchInput = (
     <TextField aria-label="Search" className="w-full">
       <InputGroup className="bg-default-100 rounded-lg">
         <InputGroup.Prefix className="pl-3">
-          <SearchIcon className="text-base text-default-400 pointer-events-none" />
+          <Magnifier className="text-base text-default-400 pointer-events-none" />
         </InputGroup.Prefix>
         <InputGroup.Input 
           className="text-sm" 
@@ -40,7 +40,7 @@ export const Navbar = () => {
             className="flex justify-start items-center gap-1 text-foreground"
             href="/"
           >
-            <Logo />
+            <LogoIcon width={24} />
             <p className="font-bold text-inherit">ACME</p>
           </Link>
         </div>
@@ -66,13 +66,13 @@ export const Navbar = () => {
       >
         <div className="hidden sm:flex gap-2 items-center">
           <Link href={siteConfig.links.twitter} aria-label="Twitter">
-            <TwitterIcon className="text-default-500" />
+            <LogoTwitter className="text-default-500" />
           </Link>
           <Link href={siteConfig.links.discord} aria-label="Discord">
-            <DiscordIcon className="text-default-500" />
+            <LogoDiscord className="text-default-500" />
           </Link>
           <Link href={siteConfig.links.github} aria-label="GitHub">
-            <GithubIcon className="text-default-500" />
+            <LogoGithub className="text-default-500" />
           </Link>
           <ThemeSwitch />
         </div>
@@ -82,7 +82,7 @@ export const Navbar = () => {
             className="text-sm font-normal text-default-600 bg-default-100 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-default-200 transition"
             href={siteConfig.links.sponsor}
           >
-            <HeartFilledIcon className="text-danger" />
+            <Heart className="text-danger" />
             Sponsor
           </Link>
         </div>
@@ -90,7 +90,7 @@ export const Navbar = () => {
 
       <div className="sm:hidden flex items-center justify-end basis-1 pl-4 gap-2">
         <Link href={siteConfig.links.github} aria-label="GitHub">
-          <GithubIcon className="text-default-500" />
+          <LogoGithub className="text-default-500" />
         </Link>
         <ThemeSwitch />
       </div>

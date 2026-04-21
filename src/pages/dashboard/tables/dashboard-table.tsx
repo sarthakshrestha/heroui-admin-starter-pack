@@ -12,7 +12,12 @@ import {
   SortDescriptor,
   Checkbox,
 } from "@heroui/react";
-import { Icon } from "@iconify/react";
+import {
+  Magnifier,
+  Xmark,
+  ChevronDown,
+  ChevronRight,
+} from "@gravity-ui/icons";
 
 // Table columns
 const columns = [
@@ -145,7 +150,7 @@ export default function OrderTable() {
     if (
       expectationFilter !== "all" &&
       Array.from(expectationFilter as Set<string>).length !==
-        expectationOptions.length
+      expectationOptions.length
     ) {
       filteredOrders = filteredOrders.filter((order) =>
         Array.from(expectationFilter as Set<string>).includes(order.expectation)
@@ -221,7 +226,7 @@ export default function OrderTable() {
         case "actions":
           return (
             <Button isIconOnly size="sm" variant="ghost">
-              <Icon icon="ic:round-chevron-right" width={18} />
+              <ChevronRight width={18} />
             </Button>
           );
         default:
@@ -268,7 +273,7 @@ export default function OrderTable() {
         <TextField aria-label="Search" className="w-full sm:max-w-[44%]">
           <InputGroup className="bg-default-100 rounded-xl overflow-hidden border-none shadow-sm">
             <InputGroup.Prefix className="pl-3">
-              <Icon className="text-default-400" icon="solar:magnifer-bold" width={20} />
+              <Magnifier className="text-default-400" width={20} />
             </InputGroup.Prefix>
             <InputGroup.Input
               className="py-2"
@@ -279,7 +284,7 @@ export default function OrderTable() {
             {filterValue && (
               <InputGroup.Suffix className="pr-1">
                 <Button isIconOnly size="sm" variant="ghost" onClick={onClear}>
-                  <Icon className="text-default-400" icon="ic:round-close" width={18} />
+                  <Xmark className="text-default-400" width={18} />
                 </Button>
               </InputGroup.Suffix>
             )}
@@ -287,19 +292,16 @@ export default function OrderTable() {
         </TextField>
         <div className="flex gap-3">
           <Dropdown>
-            <Dropdown.Trigger>
-              <Button
-                className="hidden sm:flex"
-                variant="secondary"
-              >
-                Fill
-                <Icon
-                  className="text-small"
-                  icon="mingcute:down-line"
-                  width={18}
-                />
-              </Button>
-            </Dropdown.Trigger>
+            <Button
+              className="hidden sm:flex"
+              variant="secondary"
+            >
+              Fill
+              <ChevronDown
+                className="text-small"
+                width={14}
+              />
+            </Button>
             <Dropdown.Popover>
               <Dropdown.Menu
                 disallowEmptySelection
@@ -317,19 +319,16 @@ export default function OrderTable() {
             </Dropdown.Popover>
           </Dropdown>
           <Dropdown>
-            <Dropdown.Trigger>
-              <Button
-                className="hidden sm:flex"
-                variant="secondary"
-              >
-                Expectation
-                <Icon
-                  className="text-small"
-                  icon="mingcute:down-line"
-                  width={18}
-                />
-              </Button>
-            </Dropdown.Trigger>
+            <Button
+              className="hidden sm:flex"
+              variant="secondary"
+            >
+              Expectation
+              <ChevronDown
+                className="text-small"
+                width={14}
+              />
+            </Button>
             <Dropdown.Popover>
               <Dropdown.Menu
                 disallowEmptySelection
@@ -347,19 +346,16 @@ export default function OrderTable() {
             </Dropdown.Popover>
           </Dropdown>
           <Dropdown>
-            <Dropdown.Trigger>
-              <Button
-                className="hidden sm:flex"
-                variant="secondary"
-              >
-                Columns
-                <Icon
-                  className="text-small"
-                  icon="mingcute:down-line"
-                  width={18}
-                />
-              </Button>
-            </Dropdown.Trigger>
+            <Button
+              className="hidden sm:flex"
+              variant="secondary"
+            >
+              Columns
+              <ChevronDown
+                className="text-small"
+                width={14}
+              />
+            </Button>
             <Dropdown.Popover>
               <Dropdown.Menu
                 disallowEmptySelection
@@ -399,53 +395,51 @@ export default function OrderTable() {
   );
 
   const bottomContent = (
-    <div className="py-2 px-2 flex justify-between items-center">
-      <span className="w-[30%] text-small text-default-400">
-        {selectedKeys === "all"
-          ? "All items selected"
-          : `${(selectedKeys as Set<string>).size} of ${filteredItems.length} selected`}
-      </span>
-      <Pagination
-        className="gap-2"
-      >
+    <div className="py-3 px-4 flex justify-between items-center bg-default-50/50 rounded-b-xl border-t border-divider">
+      <div className="w-[30%]">
+        <span className="text-xs font-medium text-default-400">
+          {selectedKeys === "all"
+            ? "All items selected"
+            : `${(selectedKeys as Set<string>).size} of ${filteredItems.length} selected`}
+        </span>
+      </div>
+
+      <Pagination className="gap-6 flex-1 justify-center">
+        <Pagination.Summary className="hidden lg:block text-xs text-default-400 font-medium">
+          Showing {(page - 1) * rowsPerPage + 1}-{Math.min(page * rowsPerPage, filteredItems.length)} of {filteredItems.length}
+        </Pagination.Summary>
         <Pagination.Content>
           <Pagination.Item>
-            <Pagination.Previous onPress={onPreviousPage}>
-              <Icon icon="ic:round-chevron-left" width={18} />
+            <Pagination.Previous onPress={onPreviousPage} className="rounded-lg h-9">
+              <Pagination.PreviousIcon />
+              <span className="hidden sm:inline ml-1">Previous</span>
             </Pagination.Previous>
           </Pagination.Item>
-          {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
-            <Pagination.Item key={p}>
-              <Pagination.Link isActive={p === page} onPress={() => setPage(p)}>
-                {p}
-              </Pagination.Link>
-            </Pagination.Item>
-          ))}
+
+          <div className="flex items-center gap-1">
+            {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
+              <Pagination.Item key={p}>
+                <Pagination.Link
+                  isActive={p === page}
+                  onPress={() => setPage(p)}
+                  className="rounded-lg h-9 w-9"
+                >
+                  {p}
+                </Pagination.Link>
+              </Pagination.Item>
+            ))}
+          </div>
+
           <Pagination.Item>
-            <Pagination.Next onPress={onNextPage}>
-              <Icon icon="ic:round-chevron-right" width={18} />
+            <Pagination.Next onPress={onNextPage} className="rounded-lg h-9">
+              <span className="hidden sm:inline mr-1">Next</span>
+              <Pagination.NextIcon />
             </Pagination.Next>
           </Pagination.Item>
         </Pagination.Content>
       </Pagination>
-      <div className="hidden sm:flex w-[30%] justify-end gap-2">
-        <Button
-          isDisabled={page === 1}
-          size="sm"
-          variant="secondary"
-          onPress={onPreviousPage}
-        >
-          Previous
-        </Button>
-        <Button
-          isDisabled={page === pages}
-          size="sm"
-          variant="secondary"
-          onPress={onNextPage}
-        >
-          Next
-        </Button>
-      </div>
+
+      <div className="w-[30%]" />
     </div>
   );
 
@@ -456,6 +450,7 @@ export default function OrderTable() {
         <Table.ScrollContainer>
           <Table.Content
             aria-label="Order Table"
+            className="min-w-[600px]"
             selectedKeys={selectedKeys}
             selectionMode="multiple"
             sortDescriptor={sortDescriptor}
@@ -466,10 +461,11 @@ export default function OrderTable() {
               <Table.Column>
                 <Checkbox slot="selection" />
               </Table.Column>
-              {headerColumns.map((column) => (
+              {headerColumns.map((column, index) => (
                 <Table.Column
                   key={column.uid}
                   allowsSorting={column.sortable}
+                  isRowHeader={index === 0}
                   className={column.uid === "actions" ? "text-center" : "text-left"}
                 >
                   {column.name}
@@ -478,7 +474,7 @@ export default function OrderTable() {
             </Table.Header>
             <Table.Body renderEmptyState={() => <div className="p-4 text-center">No orders found</div>}>
               {sortedItems.map((item) => (
-                <Table.Row id={item.id} key={item.id}>
+                <Table.Row id={String(item.id)} key={item.id}>
                   <Table.Cell>
                     <Checkbox slot="selection" />
                   </Table.Cell>

@@ -1,5 +1,12 @@
-import { Button, Tabs, Select, ListBox } from "@heroui/react";
-import { Icon } from "@iconify/react";
+import { Button, Tabs, Select, ListBox, Label } from "@heroui/react";
+import {
+  LayoutRows,
+  Check,
+  Envelope,
+  ListUl,
+  ArrowUpFromLine,
+  Plus,
+} from "@gravity-ui/icons";
 import { useState } from "react";
 
 import KpiCard from "./kpis/kpi-card";
@@ -11,19 +18,19 @@ const tabsData = [
   {
     key: "all",
     label: "All Orders",
-    icon: "solar:scan-bold-duotone",
+    icon: <LayoutRows />,
     content: <OrderTable />,
   },
   {
     key: "confirmed",
     label: "Confirmed",
-    icon: "solar:check-circle-bold",
+    icon: <Check />,
     content: <div className="p-6 text-default-400">No confirmed orders.</div>,
   },
   {
     key: "need-confirmation",
     label: "Need Confirmation",
-    icon: "solar:letter-bold",
+    icon: <Envelope />,
     content: (
       <div className="p-6 text-default-400">
         No orders needing confirmation.
@@ -33,7 +40,7 @@ const tabsData = [
   {
     key: "pick-lists",
     label: "Pick-lists",
-    icon: "solar:list-bold",
+    icon: <ListUl />,
     content: (
       <div className="p-6 text-default-400">No pick-lists available.</div>
     ),
@@ -59,14 +66,14 @@ function DashboardMain() {
             className="w-1/2 md:w-auto border border-default-200"
             variant="outline"
           >
-            <Icon icon="line-md:cloud-alt-upload-filled-loop" width={18} />
+            <ArrowUpFromLine width={18} />
             Import
           </Button>
           <Button
             className="w-1/2 md:w-auto bg-accent text-white"
             variant="primary"
           >
-            <Icon icon="ic:baseline-plus" width={18} />
+            <Plus width={18} />
             Add
           </Button>
         </div>
@@ -85,12 +92,8 @@ function DashboardMain() {
                 {tabsData.map((tab) => (
                   <Tabs.Tab key={tab.key} id={tab.key}>
                     <div className="flex items-center gap-2">
-                      <Icon
-                        className="text-default-700"
-                        icon={tab.icon}
-                        width={20}
-                      />
-                      <span className="text-default-700">{tab.label}</span>
+                       <span className="text-default-700">{tab.icon}</span>
+                       <span className="text-default-700">{tab.label}</span>
                     </div>
                     <Tabs.Indicator />
                   </Tabs.Tab>
@@ -107,6 +110,7 @@ function DashboardMain() {
         {/* Mobile select */}
         <div className="md:hidden">
           <Select
+            aria-label="Select Tab"
             className="max-w-xs mb-4"
             placeholder="Select a tab"
             onChange={(value) => {
@@ -123,7 +127,7 @@ function DashboardMain() {
               <ListBox items={tabsData}>
                 {(item) => (
                   <ListBox.Item id={item.key} textValue={item.label}>
-                    {item.label}
+                    <Label>{item.label}</Label>
                   </ListBox.Item>
                 )}
               </ListBox>
