@@ -1,4 +1,4 @@
-import { useTheme } from "@heroui/use-theme";
+import { useTheme } from "@/hooks/use-theme";
 import { Icon } from "@iconify/react";
 
 export default function ThemeSwitcher() {

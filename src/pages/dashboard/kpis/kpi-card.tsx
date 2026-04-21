@@ -1,4 +1,4 @@
-import { Card, CardBody } from "@heroui/react";
+import { Card } from "@heroui/react";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { Icon } from "@iconify/react";
 
@@ -89,8 +89,8 @@ const KpiCards = () => {
   return (
     <div className="grid grid-cols-1 gap-4 my-4 md:grid-cols-2 lg:grid-cols-4">
       {kpiData.map((kpi, index) => (
-        <Card key={index} className="border-divider">
-          <CardBody className="p-0">
+        <Card key={index} className="border-default-200">
+          <Card.Content className="p-0">
             <div className="p-6 flex flex-col gap-1">
               {/* Header */}
               <div className="flex flex-col gap-2">
@@ -132,7 +132,7 @@ const KpiCards = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          </CardBody>
+          </Card.Content>
         </Card>
       ))}
     </div>

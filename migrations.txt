@@ -1,0 +1,4294 @@
+# Button Migration Guide
+
+**Component:** button
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/button.mdx
+
+---
+
+<page url="/docs/react/migration/button">
+# Button
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/button
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/button.mdx
+> Migration guide for Button from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Button documentation](/docs/react/components/button) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Structure Changes
+
+In v2, `Button` used a combination of `color` and `variant` props:
+
+```tsx
+import { Button } from "@heroui/react";
+
+export default function App() {
+  return <Button color="primary" variant="solid">Button</Button>;
+}
+
+```
+
+In v3, Button uses only the `variant` prop (no separate `color` prop):
+
+```tsx
+import { Button } from "@heroui/react";
+
+export default function App() {
+  return <Button variant="primary">Button</Button>;
+}
+
+```
+
+## Key Changes
+
+### 1. Variants and Colors
+
+**v2:** Used `color` + `variant` combination\
+**v3:** Uses `variant` only (no separate `color` prop)
+
+| v2 Color + Variant                   | v3 Variant              | Notes                                     |
+| ------------------------------------ | ----------------------- | ----------------------------------------- |
+| `color="primary" variant="solid"`    | `variant="primary"`     | Default primary button                    |
+| `color="default" variant="solid"`    | `variant="primary"`     | Use primary variant                       |
+| `color="secondary" variant="solid"`  | `variant="secondary"`   | Same                                      |
+| `color="success" variant="solid"`    | `variant="primary"`     | Use primary with custom styling if needed |
+| `color="warning" variant="solid"`    | `variant="primary"`     | Use primary with custom styling if needed |
+| `color="danger" variant="solid"`     | `variant="danger"`      | Danger variant available                  |
+| `color="primary" variant="bordered"` | `variant="secondary"`   | Similar appearance                        |
+| `color="primary" variant="light"`    | `variant="tertiary"`    | Similar appearance                        |
+| `color="primary" variant="flat"`     | `variant="tertiary"`    | Similar appearance                        |
+| `color="primary" variant="faded"`    | `variant="secondary"`   | Similar appearance                        |
+| `color="primary" variant="ghost"`    | `variant="ghost"`       | Same                                      |
+| `color="danger" variant="flat"`      | `variant="danger-soft"` | New soft danger variant                   |
+
+**v2 Variants:** `solid`, `bordered`, `light`, `flat`, `faded`, `shadow`, `ghost`\
+**v3 Variants:** `primary`, `secondary`, `tertiary`, `outline`, `ghost`, `danger`, `danger-soft`
+
+### 2. Loading State: `isLoading` → `isPending`
+
+**v2:** Used `isLoading` prop\
+**v3:** Uses `isPending` prop
+
+### 3. Default Width Behavior
+
+**v2:** Buttons had minimum widths based on size (`min-w-16` for sm, `min-w-20` for md, `min-w-24` for lg)\
+**v3:** Buttons use `w-fit` by default (width fits content, no minimum width)
+
+This means v3 buttons will be narrower than v2 buttons when they have short text. To maintain v2's minimum width behavior, add Tailwind classes see the [Minimum Width](#minimum-width) example section.
+
+### 4. Prop Changes
+
+| v2 Prop                       | v3 Location | Notes                                                             |
+| ----------------------------- | ----------- | ----------------------------------------------------------------- |
+| `isLoading`                   | `Button`    | Renamed to `isPending`                                            |
+| `isIconOnly`                  | `Button`    | Still available in v3 — renders a square button with only an icon |
+| `color`                       | -           | Removed (variants handle styling)                                 |
+| `radius`                      | -           | Removed (use Tailwind e.g. `rounded-lg`)                          |
+| `startContent`, `endContent`  | -           | Place icons as children                                           |
+| `spinner`, `spinnerPlacement` | -           | Handle loading manually with render props                         |
+| `disableRipple`               | -           | Removed (ripple removed in v3)                                    |
+| `disableAnimation`            | -           | Removed (animations handled internally)                           |
+| `classNames`                  | -           | Use `className`                                                   |
+
+### 5. ButtonGroup Available
+
+**v2:** Had a dedicated `ButtonGroup` component\
+**v3:** `ButtonGroup` continues to exist. See the [ButtonGroup migration guide](/docs/react/migration/button-group) for details.
+
+## Migration Examples
+
+### Variants
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Button color="primary" variant="solid">Solid</Button>
+    <Button color="primary" variant="bordered">Bordered</Button>
+    <Button color="primary" variant="ghost">Ghost</Button>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Button variant="primary">Primary</Button>
+    <Button variant="secondary">Secondary</Button>
+    <Button variant="ghost">Ghost</Button>
+    ```
+  </Tab>
+</Tabs>
+
+### Danger Soft Variant
+
+The `danger-soft` variant is new in v3. It replaces the v2 pattern of using a flat danger button.
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Button color="danger" variant="flat">Delete</Button>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Button variant="danger-soft">Delete</Button>
+    ```
+  </Tab>
+</Tabs>
+
+### Icon Only (`isIconOnly`)
+
+The `isIconOnly` prop is available in both v2 and v3. It renders a square button sized to fit a single icon. In v3, use `variant` instead of `color` for styling.
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Button isIconOnly color="danger" variant="flat">
+      <HeartIcon />
+    </Button>
+    <Button isIconOnly color="primary" variant="bordered" size="sm">
+      <SearchIcon />
+    </Button>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Icon } from "@iconify/react";
+
+    <Button isIconOnly variant="danger-soft">
+      <Icon icon="gravity-ui:heart" />
+    </Button>
+    <Button isIconOnly variant="secondary" size="sm">
+      <Icon icon="gravity-ui:magnifier" />
+    </Button>
+    ```
+  </Tab>
+</Tabs>
+
+### Loading State
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* Simple loading */}
+    <Button isLoading color="primary">
+      Loading
+    </Button>
+
+    {/* Loading with conditional content */}
+    <Button 
+      isLoading={isLoading}
+      spinnerPlacement="start"
+      color="primary"
+      onPress={() => setIsLoading(true)}
+    >
+      Upload File
+    </Button>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { useState } from "react";
+    import { Spinner } from "@heroui/react";
+    import { Icon } from "@iconify/react";
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    {/* Simple loading */}
+    <Button isPending={isLoading}>
+      {({isPending}) => (
+        <>
+          {isPending && <Spinner color="current" size="sm" />}
+          Loading
+        </>
+      )}
+    </Button>
+
+    {/* Loading with conditional content */}
+    <Button 
+      isPending={isLoading}
+      onPress={() => setIsLoading(true)}
+    >
+      {({isPending}) => (
+        <>
+          {isPending ? (
+            <Spinner color="current" size="sm" />
+          ) : (
+            <Icon icon="gravity-ui:paperclip" />
+          )}
+          {isPending ? "Uploading..." : "Upload File"}
+        </>
+      )}
+    </Button>
+    ```
+  </Tab>
+</Tabs>
+
+### With Icons
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { Icon } from "@iconify/react";
+
+    <Button 
+      color="success" 
+      endContent={<Icon icon="gravity-ui:camera" />}
+    >
+      Take a photo
+    </Button>
+    <Button 
+      color="danger" 
+      startContent={<Icon icon="gravity-ui:trash-bin" />}
+      variant="bordered"
+    >
+      Delete user
+    </Button>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Icon } from "@iconify/react";
+
+    <Button variant="primary">
+      <Icon icon="gravity-ui:camera" />
+      Take a photo
+    </Button>
+    <Button variant="secondary">
+      <Icon icon="gravity-ui:trash-bin" />
+      Delete user
+    </Button>
+    ```
+  </Tab>
+</Tabs>
+
+### Icon Only Button
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Button isIconOnly color="danger">
+      <HeartIcon />
+    </Button>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Icon } from "@iconify/react";
+
+    <Button isIconOnly variant="danger">
+      <Icon icon="gravity-ui:heart" />
+    </Button>
+    ```
+  </Tab>
+</Tabs>
+
+### Button Group
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { Button, ButtonGroup } from "@heroui/react";
+
+    <ButtonGroup size="sm" color="primary" variant="solid">
+      <Button>One</Button>
+      <Button>Two</Button>
+      <Button>Three</Button>
+    </ButtonGroup>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Button, ButtonGroup } from "@heroui/react";
+
+    <ButtonGroup size="sm" variant="primary">
+      <Button>One</Button>
+      <Button>Two</Button>
+      <Button>Three</Button>
+    </ButtonGroup>
+    ```
+  </Tab>
+</Tabs>
+
+### Sizes and Minimum Width
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* v2 automatically applies minimum widths */}
+    <Button size="md" color="primary">Save</Button>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    {/* v3 uses w-fit by default - add min-width to match v2 */}
+    <Button size="md" variant="primary" className="min-w-20">
+      Save
+    </Button>
+    ```
+  </Tab>
+</Tabs>
+
+## Render Props Pattern
+
+v3 Button supports a render prop pattern that provides state information:
+
+```tsx
+<Button isPending={isLoading}>
+  {({isPending, isPressed, isHovered, isFocused, isFocusVisible, isDisabled}) => (
+    <>
+      {isPending && <Spinner size="sm" />}
+      {isPressed ? "Pressed!" : "Click me"}
+    </>
+  )}
+</Button>
+
+```
+
+Available render props:
+
+* `isPending` - Whether button is in loading state
+* `isPressed` - Whether button is currently pressed
+* `isHovered` - Whether button is hovered
+* `isFocused` - Whether button is focused
+* `isFocusVisible` - Whether button should show focus indicator
+* `isDisabled` - Whether button is disabled
+
+## Summary
+
+1. **Color Prop Removed**: Use `variant` prop instead of `color` + `variant`
+2. **Variants Changed**: New variant system (`primary`, `secondary`, `tertiary`, `outline`, `ghost`, `danger`, `danger-soft`)
+3. **`danger-soft` Variant**: New in v3, replaces v2's `color="danger" variant="flat"` pattern
+4. **isLoading → isPending**: Loading prop renamed
+5. **isIconOnly**: Still supported in v3 — renders a square button for icon-only use
+6. **Default Width Changed**: Buttons now use `w-fit` instead of minimum widths - add `min-w-*` classes to match v2 behavior
+7. **Icons**: `startContent`/`endContent` removed - place icons as children
+8. **Loading Spinner**: Must handle spinner manually with render props
+9. **Render Props**: v3 Button children can be a function receiving `isPending`, `isPressed`, `isHovered`, `isFocused`, `isFocusVisible`, and `isDisabled`
+10. **Radius Removed**: Use Tailwind CSS classes
+11. **Ripple Removed**: No ripple effect in v3
+12. **ButtonGroup Available**: See [ButtonGroup migration guide](/docs/react/migration/button-group)
+13. **ClassNames Removed**: Use `className` prop
+
+</page>
+
+---
+
+# Card Migration Guide
+
+**Component:** card
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/card.mdx
+
+---
+
+<page url="/docs/react/migration/card">
+# Card
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/card
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/card.mdx
+> Migration guide for Card from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Card documentation](/docs/react/components/card) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Structure Changes
+
+In v2, Card used separate components: `CardHeader`, `CardBody`, and `CardFooter`:
+
+```tsx
+import { Card, CardHeader, CardBody, CardFooter } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Card>
+      <CardHeader>Header</CardHeader>
+      <CardBody>Body</CardBody>
+      <CardFooter>Footer</CardFooter>
+    </Card>
+  );
+}
+
+```
+
+In v3, Card uses a compound component pattern with explicit subcomponents:
+
+```tsx
+import { Card } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Card>
+      <Card.Header>
+        <Card.Title>Title</Card.Title>
+        <Card.Description>Description</Card.Description>
+      </Card.Header>
+      <Card.Content>Body content</Card.Content>
+      <Card.Footer>Footer</Card.Footer>
+    </Card>
+  );
+}
+
+```
+
+## Key Changes
+
+### 1. Component Structure
+
+**v2:** Separate components: `CardHeader`, `CardBody`, `CardFooter`\
+**v3:** Compound components: `Card.Header`, `Card.Title`, `Card.Description`, `Card.Content`, `Card.Footer`
+
+### 2. Component Name Changes
+
+| v2 Component | v3 Component       | Notes                                    |
+| ------------ | ------------------ | ---------------------------------------- |
+| `CardHeader` | `Card.Header`      | Same functionality                       |
+| `CardBody`   | `Card.Content`     | Renamed                                  |
+| `CardFooter` | `Card.Footer`      | Same functionality                       |
+| -            | `Card.Title`       | New subcomponent for header titles       |
+| -            | `Card.Description` | New subcomponent for header descriptions |
+
+### 3. Prop Changes
+
+| v2 Prop                             | v3 Location | Notes                                                |
+| ----------------------------------- | ----------- | ---------------------------------------------------- |
+| `shadow`                            | -           | Removed (use Tailwind e.g. `shadow-sm`, `shadow-md`) |
+| `radius`                            | -           | Removed (use Tailwind e.g. `rounded-lg`)             |
+| `fullWidth`                         | -           | Removed (use Tailwind `w-full`)                      |
+| `isHoverable`                       | -           | Removed (use Tailwind hover classes)                 |
+| `isPressable`                       | -           | Use button or link wrapper inside Card               |
+| `isBlurred`, `isFooterBlurred`      | -           | Removed (use Tailwind `backdrop-blur-*`)             |
+| `isDisabled`                        | -           | Removed (handle with conditional rendering)          |
+| `disableAnimation`, `disableRipple` | -           | Removed                                              |
+| `allowTextSelectionOnPress`         | -           | Removed (not applicable)                             |
+| `classNames`                        | -           | Use `className` on parts                             |
+
+### 4. Variants
+
+**v2:** No variant prop (used shadow/radius for styling)\
+**v3:** Has `variant` prop: `transparent`, `default`, `secondary`, `tertiary`
+
+## Migration Examples
+
+### Card Structure
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* Basic structure */}
+    <Card>
+      <CardHeader>Header</CardHeader>
+      <CardBody>Body content</CardBody>
+      <CardFooter>Footer</CardFooter>
+    </Card>
+
+    {/* With title and description */}
+    <Card>
+      <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+        <p className="text-tiny uppercase font-bold">Daily Mix</p>
+        <small className="text-default-500">12 Tracks</small>
+        <h4 className="font-bold text-large">Frontend Radio</h4>
+      </CardHeader>
+      <CardBody>Content</CardBody>
+    </Card>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    {/* Basic structure */}
+    <Card>
+      <Card.Header>
+        <Card.Title>Header</Card.Title>
+      </Card.Header>
+      <Card.Content>Body content</Card.Content>
+      <Card.Footer>Footer</Card.Footer>
+    </Card>
+
+    {/* With title and description */}
+    <Card>
+      <Card.Header>
+        <Card.Title>Frontend Radio</Card.Title>
+        <Card.Description>Daily Mix • 12 Tracks</Card.Description>
+      </Card.Header>
+      <Card.Content>Content</Card.Content>
+    </Card>
+    ```
+  </Tab>
+</Tabs>
+
+### Pressable Card
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Card 
+      isPressable 
+      shadow="sm" 
+      onPress={() => console.log("pressed")}
+    >
+      <CardBody>Clickable card</CardBody>
+    </Card>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Card className="shadow-sm">
+      <button
+        type="button"
+        className="w-full cursor-pointer text-left"
+        onClick={() => console.log("pressed")}
+      >
+        <Card.Content>Clickable card</Card.Content>
+      </button>
+    </Card>
+    ```
+  </Tab>
+</Tabs>
+
+### Card with Image
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Card className="py-4">
+      <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+        <h4 className="font-bold text-large">Frontend Radio</h4>
+      </CardHeader>
+      <CardBody className="overflow-visible py-2">
+        <Image
+          alt="Card background"
+          className="object-cover rounded-xl"
+          src="https://example.com/image.jpg"
+          width={270}
+        />
+      </CardBody>
+    </Card>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Card className="py-4">
+      <Card.Header>
+        <Card.Title>Frontend Radio</Card.Title>
+      </Card.Header>
+      <Card.Content className="overflow-visible py-2">
+        <img
+          alt="Card background"
+          className="object-cover rounded-xl w-full"
+          src="https://example.com/image.jpg"
+        />
+      </Card.Content>
+    </Card>
+    ```
+  </Tab>
+</Tabs>
+
+### Blurred Footer Card
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { Card, CardFooter, Image, Button } from "@heroui/react";
+
+    <Card isFooterBlurred className="border-none" radius="lg">
+      <Image
+        alt="Woman listing to music"
+        className="object-cover"
+        height={200}
+        src="https://example.com/image.jpg"
+        width={200}
+      />
+      <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+        <p className="text-tiny text-white/80">Available soon.</p>
+        <Button className="text-tiny text-white bg-black/20" size="sm">
+          Notify me
+        </Button>
+      </CardFooter>
+    </Card>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Card, Button } from "@heroui/react";
+
+    <Card className="border-none rounded-lg relative overflow-hidden">
+      <img
+        alt="Woman listing to music"
+        className="object-cover w-full h-[200px]"
+        src="https://example.com/image.jpg"
+      />
+      <Card.Footer className="justify-between backdrop-blur-md bg-white/10 border-white/20 border overflow-hidden py-1 absolute rounded-lg bottom-1 w-[calc(100%_-_8px)] shadow-sm ml-1 z-10">
+        <p className="text-tiny text-white/80">Available soon.</p>
+        <Button className="text-tiny text-white bg-black/20" size="sm">
+          Notify me
+        </Button>
+      </Card.Footer>
+    </Card>
+    ```
+  </Tab>
+</Tabs>
+
+### Card Variants
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* v2 doesn't have variants, uses shadow/radius */}
+    <Card shadow="md" radius="lg">
+      <CardBody>Content</CardBody>
+    </Card>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Card variant="default">
+      <Card.Content>Content</Card.Content>
+    </Card>
+    <Card variant="secondary">
+      <Card.Content>Content</Card.Content>
+    </Card>
+    ```
+  </Tab>
+</Tabs>
+
+## Styling Changes
+
+### v2: `classNames` Prop
+
+```tsx
+<Card 
+  classNames={{
+    base: "custom-base",
+    header: "custom-header",
+    body: "custom-body",
+    footer: "custom-footer"
+  }}
+/>
+
+```
+
+### v3: Direct `className` Props
+
+```tsx
+<Card className="custom-base">
+  <Card.Header className="custom-header">
+    <Card.Title>Title</Card.Title>
+  </Card.Header>
+  <Card.Content className="custom-body">
+    Content
+  </Card.Content>
+  <Card.Footer className="custom-footer">
+    Footer
+  </Card.Footer>
+</Card>
+
+```
+
+## Component Anatomy
+
+The v3 Card follows this structure:
+
+```
+
+Card (Root)
+  ├── Card.Header (optional)
+  │   ├── Card.Title (optional)
+  │   └── Card.Description (optional)
+  ├── Card.Content (optional)
+  └── Card.Footer (optional)
+
+```
+
+## Summary
+
+1. **Component Structure**: Must use compound components instead of separate components
+2. **CardBody → Card.Content**: Component renamed
+3. **New Subcomponents**: `Card.Title` and `Card.Description` for structured headers
+4. **Props Removed**: Many styling props removed; use Tailwind CSS classes
+5. **Pressable Cards**: Use a button or link inside Card instead of `isPressable`
+6. **Blur Effects**: Use Tailwind `backdrop-blur-*` classes instead of props
+7. **Variants**: New variant system for semantic prominence levels
+8. **ClassNames Removed**: Use `className` props on individual components
+
+</page>
+
+---
+
+# Tabs Migration Guide
+
+**Component:** tabs
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/tabs.mdx
+
+---
+
+<page url="/docs/react/migration/tabs">
+# Tabs
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/tabs
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/tabs.mdx
+> Migration guide for Tabs from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Tabs documentation](/docs/react/components/tabs) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Structure Changes
+
+In v2, Tabs used `Tab` component with `title` prop and children as panel content:
+
+```tsx
+import { Tabs, Tab } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Tabs aria-label="Options">
+      <Tab key="photos" title="Photos">
+        <Card>Content here</Card>
+      </Tab>
+    </Tabs>
+  );
+}
+
+```
+
+In v3, Tabs requires compound components with separate tab and panel:
+
+```tsx
+import { Tabs } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Tabs>
+      <Tabs.ListContainer>
+        <Tabs.List aria-label="Options">
+          <Tabs.Tab id="photos">
+            Photos
+            <Tabs.Indicator />
+          </Tabs.Tab>
+        </Tabs.List>
+      </Tabs.ListContainer>
+      <Tabs.Panel id="photos">
+        <Card>Content here</Card>
+      </Tabs.Panel>
+    </Tabs>
+  );
+}
+
+```
+
+## Key Changes
+
+### 1. Component Structure
+
+**v2:** `Tabs` with `Tab` children (title prop + children as panel)\
+**v3:** Compound components (`Tabs.ListContainer`, `Tabs.List`, `Tabs.Tab`, `Tabs.Indicator`, `Tabs.Separator`, `Tabs.Panel`)
+
+### 2. Prop Changes
+
+| v2 Prop                  | v3 Location             | Notes                                          |
+| ------------------------ | ----------------------- | ---------------------------------------------- |
+| `key` (on Tab)           | `id` (on Tab and Panel) | Changed prop name                              |
+| `title` (on Tab)         | —                       | Content goes directly in `Tabs.Tab`            |
+| `isVertical`             | `orientation`           | Changed to `"horizontal"` \| `"vertical"`      |
+| `placement`              | —                       | Use `orientation` and layout                   |
+| `variant`                | `variant`               | Simplified to `primary` \| `secondary` only    |
+| `color`                  | —                       | Removed (use Tailwind CSS)                     |
+| `size`                   | —                       | Removed (use Tailwind CSS)                     |
+| `radius`                 | —                       | Removed (use Tailwind CSS)                     |
+| `classNames`             | —                       | Use `className` props on individual components |
+| `disableCursorAnimation` | —                       | Use `Tabs.Indicator` component                 |
+| `disableAnimation`       | —                       | Removed (animations handled differently)       |
+| `fullWidth`              | —                       | Removed (use Tailwind CSS)                     |
+
+### 3. Component Changes
+
+* **Tab identification**: `key` → `id` (must match between `Tabs.Tab` and `Tabs.Panel`)
+* **Tab content**: `title` prop → direct children in `Tabs.Tab`
+* **Panel content**: Tab children → separate `Tabs.Panel` component
+* **Indicator**: Automatic cursor → explicit `Tabs.Indicator` component
+* **Separator**: New `Tabs.Separator` component to display separator lines between tabs
+
+## Migration Examples
+
+### Controlled Tabs
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { useState } from "react";
+
+    const [selected, setSelected] = useState("photos");
+
+    <Tabs selectedKey={selected} onSelectionChange={setSelected}>
+      <Tab key="photos" title="Photos">Content</Tab>
+      <Tab key="music" title="Music">Content</Tab>
+    </Tabs>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { useState } from "react";
+
+    const [selected, setSelected] = useState("photos");
+
+    <Tabs selectedKey={selected} onSelectionChange={setSelected}>
+      <Tabs.ListContainer>
+        <Tabs.List aria-label="Options">
+          <Tabs.Tab id="photos">
+            Photos
+            <Tabs.Indicator />
+          </Tabs.Tab>
+          <Tabs.Tab id="music">
+            Music
+            <Tabs.Indicator />
+          </Tabs.Tab>
+        </Tabs.List>
+      </Tabs.ListContainer>
+      <Tabs.Panel id="photos">Content</Tabs.Panel>
+      <Tabs.Panel id="music">Content</Tabs.Panel>
+    </Tabs>
+    ```
+  </Tab>
+</Tabs>
+
+### With Icons
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Tabs aria-label="Options">
+      <Tab key="photos" title={<><PhotoIcon /> Photos</>}>
+        Content
+      </Tab>
+    </Tabs>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Tabs>
+      <Tabs.ListContainer>
+        <Tabs.List aria-label="Options">
+          <Tabs.Tab id="photos">
+            <PhotoIcon />
+            Photos
+            <Tabs.Indicator />
+          </Tabs.Tab>
+        </Tabs.List>
+      </Tabs.ListContainer>
+      <Tabs.Panel id="photos">Content</Tabs.Panel>
+    </Tabs>
+    ```
+  </Tab>
+</Tabs>
+
+### With Separator
+
+In v3, you can add `Tabs.Separator` inside each `Tabs.Tab` (except the first) to display separator lines between tabs. This is a new feature with no v2 equivalent.
+
+```tsx
+<Tabs>
+  <Tabs.ListContainer>
+    <Tabs.List aria-label="Options">
+      <Tabs.Tab id="photos">
+        Photos
+        <Tabs.Indicator />
+      </Tabs.Tab>
+      <Tabs.Tab id="music">
+        <Tabs.Separator />
+        Music
+        <Tabs.Indicator />
+      </Tabs.Tab>
+      <Tabs.Tab id="videos">
+        <Tabs.Separator />
+        Videos
+        <Tabs.Indicator />
+      </Tabs.Tab>
+    </Tabs.List>
+  </Tabs.ListContainer>
+  <Tabs.Panel id="photos">Photos content</Tabs.Panel>
+  <Tabs.Panel id="music">Music content</Tabs.Panel>
+  <Tabs.Panel id="videos">Videos content</Tabs.Panel>
+</Tabs>
+
+```
+
+## Component Anatomy
+
+The v3 Tabs follows this structure:
+
+```
+
+Tabs (Root)
+  ├── Tabs.ListContainer
+  │   └── Tabs.List
+  │       └── Tabs.Tab
+  │           ├── Tabs.Separator (optional, omit on first tab)
+  │           └── Tabs.Indicator (optional)
+  └── Tabs.Panel (one per tab, matching id)
+
+```
+
+## Summary
+
+1. **Component Structure**: Must use compound components (`Tabs.ListContainer`, `Tabs.List`, `Tabs.Tab`, `Tabs.Indicator`, `Tabs.Separator`, `Tabs.Panel`)
+2. **Tab Identification**: `key` → `id` (must match between tab and panel)
+3. **Tab Content**: `title` prop removed - content goes directly in `Tabs.Tab`
+4. **Panel Separation**: Panel content moved to separate `Tabs.Panel` component
+5. **Indicator**: Must explicitly include `Tabs.Indicator` in each tab
+6. **Orientation**: `isVertical` → `orientation` prop
+7. **Styling**: `variant` simplified to `primary` | `secondary`; `color`, `size`, `radius`, `placement` removed - use Tailwind for more
+8. **ClassNames Removed**: Use `className` props on individual components
+9. **Separator (New)**: Use `Tabs.Separator` inside `Tabs.Tab` to display separator lines between tabs (no v2 equivalent)
+
+</page>
+
+---
+
+# Dropdown Migration Guide
+
+**Component:** dropdown
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/dropdown.mdx
+
+---
+
+<page url="/docs/react/migration/dropdown">
+# Dropdown
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/dropdown
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/dropdown.mdx
+> Migration guide for Dropdown from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Dropdown documentation](/docs/react/components/dropdown) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Structure Changes
+
+In v2, Dropdown used separate components: `DropdownTrigger`, `DropdownMenu`, `DropdownItem`, `DropdownSection`:
+
+```tsx
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Dropdown>
+      <DropdownTrigger>
+        <Button>Open Menu</Button>
+      </DropdownTrigger>
+      <DropdownMenu>
+        <DropdownItem key="new">New file</DropdownItem>
+        <DropdownItem key="copy">Copy link</DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
+  );
+}
+
+```
+
+In v3, Dropdown uses a compound component pattern with explicit subcomponents:
+
+```tsx
+import { Dropdown, Button, Label } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Dropdown>
+      <Button>Open Menu</Button>
+      <Dropdown.Popover>
+        <Dropdown.Menu>
+          <Dropdown.Item id="new" textValue="New file">
+            <Label>New file</Label>
+          </Dropdown.Item>
+          <Dropdown.Item id="copy" textValue="Copy link">
+            <Label>Copy link</Label>
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
+  );
+}
+
+```
+
+## Key Changes
+
+### 1. Component Structure
+
+**v2:** Separate components: `DropdownTrigger`, `DropdownMenu`, `DropdownItem`, `DropdownSection`\
+**v3:** Compound components: `Dropdown.Trigger`, `Dropdown.Popover`, `Dropdown.Menu`, `Dropdown.Item`, `Dropdown.Section`
+
+### 2. Component Name Changes
+
+| v2 Component      | v3 Component       | Notes                                              |
+| ----------------- | ------------------ | -------------------------------------------------- |
+| `DropdownTrigger` | `Dropdown.Trigger` | Same functionality                                 |
+| `DropdownMenu`    | `Dropdown.Menu`    | Wrapped in `Dropdown.Popover`                      |
+| `DropdownItem`    | `Dropdown.Item`    | Use `id` and `textValue`; keep `key` on list items |
+| `DropdownSection` | `Dropdown.Section` | Same functionality                                 |
+| -                 | `Dropdown.Popover` | New wrapper component (required)                   |
+
+### 3. Item Identification
+
+**v2:** Item content passed as children; React's `key` was used for both list reconciliation and item identity (selection, focus).\
+**v3:** Item content must use `Label` component for text. Give each item an `id` (for state/focus) and `textValue` (for accessibility when content isn't plain text). Keep React's `key` on items in lists.
+
+### 4. Prop Changes
+
+| v2 Prop                                       | v3 Location     | Notes                                                 |
+| --------------------------------------------- | --------------- | ----------------------------------------------------- |
+| `variant`, `color` (on DropdownMenu)          | -               | Removed (no menu variants)                            |
+| `classNames`, `itemClasses` (on DropdownMenu) | -               | Use `className` on Menu and items                     |
+| `color` (on DropdownItem)                     | `Dropdown.Item` | Use `variant="danger"` for danger                     |
+| `title`                                       | -               | Use `Label` component as child                        |
+| `description`                                 | -               | Use `Description` component as child                  |
+| `shortcut`                                    | -               | Use `Kbd` component as child                          |
+| `startContent`, `endContent`                  | -               | Use icon/components as children                       |
+| `selectedIcon`                                | -               | Use `Dropdown.ItemIndicator`                          |
+| `showDivider`                                 | -               | Use `Separator` between items                         |
+| `classNames` (on DropdownItem)                | -               | Use `className` on item                               |
+| `isSelected`                                  | `Dropdown.Menu` | Use `selectedKeys` on Menu                            |
+| `isDisabled`                                  | `Dropdown.Menu` | Use `disabledKeys` on Menu                            |
+| `trigger` (on Dropdown)                       | `Dropdown`      | Still supported: `"press"` (default) or `"longPress"` |
+
+### 5. New Components
+
+* `Dropdown.Popover` - Required wrapper around `Dropdown.Menu`
+* `Dropdown.ItemIndicator` - For selection indicators (checkmark/dot)
+* `Dropdown.SubmenuTrigger` - For submenu functionality
+* `Dropdown.SubmenuIndicator` - For submenu chevron indicator
+
+## Migration Examples
+
+### With Action Handler
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <DropdownMenu onAction={(key) => alert(key)}>
+      <DropdownItem key="new">New file</DropdownItem>
+    </DropdownMenu>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Dropdown.Menu onAction={(key) => alert(key)}>
+      <Dropdown.Item id="new" textValue="New file">
+        <Label>New file</Label>
+      </Dropdown.Item>
+    </Dropdown.Menu>
+    ```
+  </Tab>
+</Tabs>
+
+### Item Content
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* With icon */}
+    <DropdownItem
+      key="new"
+      startContent={<AddNoteIcon />}
+    >
+      New file
+    </DropdownItem>
+
+    {/* With description */}
+    <DropdownItem
+      key="edit"
+      description="Edit the file"
+    >
+      Edit file
+    </DropdownItem>
+
+    {/* With shortcut */}
+    <DropdownItem
+      key="copy"
+      shortcut="⌘C"
+    >
+      Copy
+    </DropdownItem>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Icon } from "@iconify/react";
+    import { Label, Description, Kbd } from "@heroui/react";
+
+    {/* With icon */}
+    <Dropdown.Item id="new" textValue="New file">
+      <Icon icon="gravity-ui:square-plus" />
+      <Label>New file</Label>
+    </Dropdown.Item>
+
+    {/* With description */}
+    <Dropdown.Item id="edit" textValue="Edit file">
+      <Label>Edit file</Label>
+      <Description>Edit the file</Description>
+    </Dropdown.Item>
+
+    {/* With shortcut */}
+    <Dropdown.Item id="copy" textValue="Copy">
+      <Label>Copy</Label>
+      <Kbd slot="keyboard" variant="light">
+        <Kbd.Abbr keyValue="command" />
+        <Kbd.Content>C</Kbd.Content>
+      </Kbd>
+    </Dropdown.Item>
+    ```
+  </Tab>
+</Tabs>
+
+### Danger Item
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <DropdownItem
+      key="delete"
+      className="text-danger"
+      color="danger"
+    >
+      Delete file
+    </DropdownItem>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Dropdown.Item id="delete" textValue="Delete file" variant="danger">
+      <Label>Delete file</Label>
+    </Dropdown.Item>
+    ```
+  </Tab>
+</Tabs>
+
+### With Sections
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <DropdownMenu>
+      <DropdownSection showDivider title="Actions">
+        <DropdownItem key="new">New file</DropdownItem>
+        <DropdownItem key="edit">Edit file</DropdownItem>
+      </DropdownSection>
+      <DropdownSection title="Danger zone">
+        <DropdownItem key="delete" color="danger">Delete file</DropdownItem>
+      </DropdownSection>
+    </DropdownMenu>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Header, Separator } from "@heroui/react";
+
+    <Dropdown.Menu>
+      <Dropdown.Section>
+        <Header>Actions</Header>
+        <Dropdown.Item id="new" textValue="New file">
+          <Label>New file</Label>
+        </Dropdown.Item>
+        <Dropdown.Item id="edit" textValue="Edit file">
+          <Label>Edit file</Label>
+        </Dropdown.Item>
+      </Dropdown.Section>
+      <Separator />
+      <Dropdown.Section>
+        <Header>Danger zone</Header>
+        <Dropdown.Item id="delete" textValue="Delete file" variant="danger">
+          <Label>Delete file</Label>
+        </Dropdown.Item>
+      </Dropdown.Section>
+    </Dropdown.Menu>
+    ```
+  </Tab>
+</Tabs>
+
+### Selection
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { useState } from "react";
+
+    {/* Single selection */}
+    const [singleSelected, setSingleSelected] = useState(new Set(["text"]));
+    <DropdownMenu
+      selectedKeys={singleSelected}
+      selectionMode="single"
+      onSelectionChange={setSingleSelected}
+    >
+      <DropdownItem key="text">Text</DropdownItem>
+      <DropdownItem key="number">Number</DropdownItem>
+    </DropdownMenu>
+
+    {/* Multiple selection */}
+    const [multiSelected, setMultiSelected] = useState(new Set(["bold"]));
+    <DropdownMenu
+      selectedKeys={multiSelected}
+      selectionMode="multiple"
+      onSelectionChange={setMultiSelected}
+    >
+      <DropdownItem key="bold">Bold</DropdownItem>
+      <DropdownItem key="italic">Italic</DropdownItem>
+    </DropdownMenu>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { useState } from "react";
+
+    {/* Single selection */}
+    const [singleSelected, setSingleSelected] = useState(new Set(["text"]));
+    <Dropdown.Menu
+      selectedKeys={singleSelected}
+      selectionMode="single"
+      onSelectionChange={setSingleSelected}
+    >
+      <Dropdown.Item id="text" textValue="Text">
+        <Dropdown.ItemIndicator />
+        <Label>Text</Label>
+      </Dropdown.Item>
+      <Dropdown.Item id="number" textValue="Number">
+        <Dropdown.ItemIndicator />
+        <Label>Number</Label>
+      </Dropdown.Item>
+    </Dropdown.Menu>
+
+    {/* Multiple selection */}
+    const [multiSelected, setMultiSelected] = useState(new Set(["bold"]));
+    <Dropdown.Menu
+      selectedKeys={multiSelected}
+      selectionMode="multiple"
+      onSelectionChange={setMultiSelected}
+    >
+      <Dropdown.Item id="bold" textValue="Bold">
+        <Dropdown.ItemIndicator />
+        <Label>Bold</Label>
+      </Dropdown.Item>
+      <Dropdown.Item id="italic" textValue="Italic">
+        <Dropdown.ItemIndicator />
+        <Label>Italic</Label>
+      </Dropdown.Item>
+    </Dropdown.Menu>
+    ```
+  </Tab>
+</Tabs>
+
+### With Keyboard Shortcuts
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <DropdownItem key="copy" shortcut="⌘C">
+      Copy
+    </DropdownItem>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Label, Kbd } from "@heroui/react";
+
+    <Dropdown.Item id="copy" textValue="Copy">
+      <Label>Copy</Label>
+      <Kbd slot="keyboard" variant="light">
+        <Kbd.Abbr keyValue="command" />
+        <Kbd.Content>C</Kbd.Content>
+      </Kbd>
+    </Dropdown.Item>
+    ```
+
+    The `slot="keyboard"` prop on `Kbd` positions the shortcut at the end of the menu item, replacing the v2 `shortcut` prop.
+  </Tab>
+</Tabs>
+
+### With Submenus
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* v2 did not have built-in submenu support */}
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Label } from "@heroui/react";
+
+    <Dropdown.Menu>
+      <Dropdown.Item id="copy-link" textValue="Copy Link">
+        <Label>Copy Link</Label>
+      </Dropdown.Item>
+      <Dropdown.SubmenuTrigger>
+        <Dropdown.Item id="share" textValue="Share">
+          <Label>Share</Label>
+          <Dropdown.SubmenuIndicator />
+        </Dropdown.Item>
+        <Dropdown.Popover>
+          <Dropdown.Menu>
+            <Dropdown.Item id="whatsapp" textValue="WhatsApp">
+              <Label>WhatsApp</Label>
+            </Dropdown.Item>
+            <Dropdown.Item id="telegram" textValue="Telegram">
+              <Label>Telegram</Label>
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown.Popover>
+      </Dropdown.SubmenuTrigger>
+    </Dropdown.Menu>
+    ```
+
+    Use `Dropdown.SubmenuTrigger` to wrap an item that opens a nested menu. Place `Dropdown.SubmenuIndicator` inside the item to render a chevron icon.
+  </Tab>
+</Tabs>
+
+### Long Press Trigger
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Dropdown>
+      <DropdownTrigger>
+        <Button>Long press me</Button>
+      </DropdownTrigger>
+      <DropdownMenu>
+        <DropdownItem key="cut">Cut</DropdownItem>
+        <DropdownItem key="copy">Copy</DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Dropdown trigger="longPress">
+      <Button>Long press me</Button>
+      <Dropdown.Popover>
+        <Dropdown.Menu>
+          <Dropdown.Item id="cut" textValue="Cut">
+            <Label>Cut</Label>
+          </Dropdown.Item>
+          <Dropdown.Item id="copy" textValue="Copy">
+            <Label>Copy</Label>
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
+    ```
+
+    The `trigger` prop on `Dropdown` accepts `"press"` (default) or `"longPress"` to control how the menu is opened.
+  </Tab>
+</Tabs>
+
+## Component Anatomy
+
+The v3 Dropdown follows this structure:
+
+```
+
+Dropdown (Root) — accepts trigger="press" | "longPress"
+  ├── Dropdown.Trigger (optional, defaults to first child)
+  ├── Dropdown.Popover (required wrapper)
+  │   └── Dropdown.Menu
+  │       ├── Dropdown.Item
+  │       │   ├── Icon (optional, first child)
+  │       │   ├── Label (required for text)
+  │       │   ├── Description (optional)
+  │       │   ├── Kbd slot="keyboard" (optional, for shortcuts)
+  │       │   └── Dropdown.ItemIndicator (optional, for selection)
+  │       ├── Separator (for dividers)
+  │       ├── Dropdown.Section
+  │       │   ├── Header (optional)
+  │       │   └── Dropdown.Item
+  │       └── Dropdown.SubmenuTrigger
+  │           ├── Dropdown.Item
+  │           │   ├── Label
+  │           │   └── Dropdown.SubmenuIndicator (chevron icon)
+  │           └── Dropdown.Popover
+  │               └── Dropdown.Menu
+  │                   └── Dropdown.Item
+
+```
+
+## Summary
+
+1. **Component Structure**: Must use compound components (`Dropdown.Trigger`, `Dropdown.Popover`, `Dropdown.Menu`, etc.)
+2. **Dropdown.Popover Required**: `Dropdown.Menu` must be wrapped in `Dropdown.Popover`
+3. **Label Component**: Item text must use `Label` component
+4. **Description Component**: Use `Description` component instead of `description` prop
+5. **Kbd Component**: Use `Kbd` with `slot="keyboard"` instead of the `shortcut` prop — the slot positions the shortcut at the end of the menu item
+6. **Icons as Children**: Icons go as first child, not `startContent` prop
+7. **Separator Component**: Use `Separator` instead of `showDivider` prop
+8. **ItemIndicator Component**: Use `Dropdown.ItemIndicator` for selection indicators
+9. **Variant Instead of Color**: Use `variant="danger"` instead of `color="danger"`
+10. **No Menu Variants**: `Dropdown.Menu` no longer supports `variant` or `color` props
+11. **ClassNames Removed**: Use `className` props on individual components
+12. **Submenu Support**: Use `Dropdown.SubmenuTrigger` to wrap an item that opens a nested menu, and `Dropdown.SubmenuIndicator` inside the item for a chevron icon
+13. **Trigger Prop**: Use `trigger="longPress"` on `Dropdown` root to open the menu on long press instead of the default press
+
+</page>
+
+---
+
+# Input Migration Guide
+
+**Component:** input
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/input.mdx
+
+---
+
+<page url="/docs/react/migration/input">
+# Input
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/input
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/input.mdx
+> Migration guide for Input from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Input documentation](/docs/react/components/input) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Key Change: Input → TextField
+
+**v2:** `Input` was a full-featured component with built-in label, description, error messages, validation, variants, colors, sizes, etc.
+
+**v3:** `Input` is now a primitive component (just the input element). For form fields, use `TextField` which wraps `Input` with `Label`, `Description`, and `FieldError` components. In v2 there was no separate TextField or InputGroup; the single Input component handled labels, descriptions, start/end content, and validation.
+
+## When to Use Input vs TextField
+
+### Use TextField (Most Cases)
+
+Use `TextField` when you need:
+
+* Labels
+* Descriptions
+* Error messages
+* Validation
+* Form integration
+
+### Use Input (Primitive Only)
+
+Use `Input` when you need:
+
+* Just a basic input element
+* Custom label/error handling
+* Integration with custom form components
+
+## Structure Changes
+
+In v2, `Input` was a full-featured component that accepted props for label, description, placeholder, and other elements:
+
+```tsx
+import { Input } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Input
+      label="Email"
+      placeholder="Enter your email"
+      type="email"
+    />
+  );
+}
+
+```
+
+In v3, `Input` is a primitive component. For form fields with labels and validation, use `TextField` which wraps `Input` with `Label`, `Description`, and `FieldError`:
+
+```tsx
+import { TextField, Label, Input, FieldError } from "@heroui/react";
+
+export default function App() {
+  return (
+    <TextField name="email" type="email">
+      <Label>Email</Label>
+      <Input placeholder="Enter your email" />
+      <FieldError />
+    </TextField>
+  );
+}
+
+```
+
+## Key Changes
+
+### 1. Component Split
+
+**v2:** Single `Input` component with all features\
+**v3:** Split into `Input` (primitive) and `TextField` (compound component)
+
+### 2. Prop Changes
+
+| v2 Prop                   | v3 Location            | Notes                                                                                                                                                                |
+| ------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`                   | `Label`                | Use `Label` component inside `TextField`                                                                                                                             |
+| `description`             | `Description`          | Use `Description` component inside `TextField`                                                                                                                       |
+| `errorMessage`            | `FieldError`           | Use `FieldError` component inside `TextField`                                                                                                                        |
+| `variant`                 | `Input`                | Changed from multiple variants (flat, bordered, underlined, faded) to `"primary"` (default, with shadow) and `"secondary"` (lower emphasis, no shadow, for surfaces) |
+| `color`, `size`, `radius` | -                      | Removed (use Tailwind CSS)                                                                                                                                           |
+| `fullWidth`               | `Input` or `TextField` | Still supported on both `Input` and `TextField` (`fullWidth` boolean prop)                                                                                           |
+| `labelPlacement`          | -                      | Use layout with `Label`                                                                                                                                              |
+| `startContent`            | `InputGroup.Prefix`    | Use `InputGroup` with `InputGroup.Prefix` inside `TextField`                                                                                                         |
+| `endContent`              | `InputGroup.Suffix`    | Use `InputGroup` with `InputGroup.Suffix` inside `TextField`                                                                                                         |
+| `isClearable`             | -                      | Implement manually with button                                                                                                                                       |
+| `isRequired`, `isInvalid` | `TextField`            | Use on `TextField`                                                                                                                                                   |
+| `validate`                | `TextField`            | Use `validate` on `TextField`                                                                                                                                        |
+| `classNames`              | -                      | Use `className` on individual components                                                                                                                             |
+| `onValueChange`           | `Input`                | Use `onChange` event handler                                                                                                                                         |
+
+## Migration Examples
+
+### Form Validation
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* With description */}
+    <Input
+      description="We'll never share your email"
+      label="Email"
+      type="email"
+    />
+
+    {/* With error message */}
+    <Input
+      errorMessage="Please enter a valid email"
+      isInvalid
+      label="Email"
+      type="email"
+    />
+
+    {/* Required */}
+    <Input isRequired label="Email" type="email" />
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Description } from "@heroui/react";
+
+    {/* With description */}
+    <TextField name="email" type="email">
+      <Label>Email</Label>
+      <Input />
+      <Description>We'll never share your email</Description>
+      <FieldError />
+    </TextField>
+
+    {/* With error message */}
+    <TextField
+      isInvalid
+      name="email"
+      type="email"
+      validate={(value) => {
+        if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+          return "Please enter a valid email";
+        }
+        return null;
+      }}
+    >
+      <Label>Email</Label>
+      <Input />
+      <FieldError />
+    </TextField>
+
+    {/* Required */}
+    <TextField isRequired name="email" type="email">
+      <Label>Email</Label>
+      <Input />
+      <FieldError />
+    </TextField>
+    ```
+  </Tab>
+</Tabs>
+
+### Input with Start/End Content
+
+For inputs with prefix or suffix content, use the **InputGroup** compound component:
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Input
+      label="Price"
+      startContent={<span>$</span>}
+      type="number"
+    />
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { InputGroup } from "@heroui/react";
+
+    <TextField name="price" type="number">
+      <Label>Price</Label>
+      <InputGroup>
+        <InputGroup.Prefix>$</InputGroup.Prefix>
+        <InputGroup.Input />
+      </InputGroup>
+      <FieldError />
+    </TextField>
+    ```
+  </Tab>
+</Tabs>
+
+**InputGroup** provides proper styling and layout for prefix/suffix content. Use:
+
+* `InputGroup.Prefix` for content before the input (replaces `startContent`)
+* `InputGroup.Suffix` for content after the input (replaces `endContent`)
+* `InputGroup.Input` for the input element itself
+
+### Input with Clear Button
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Input
+      isClearable
+      label="Email"
+      onClear={() => console.log("cleared")}
+      type="email"
+    />
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { useState } from "react";
+    import { CloseButton } from "@heroui/react";
+
+    const [value, setValue] = useState("");
+
+    <TextField name="email" type="email">
+      <Label>Email</Label>
+      <div className="flex items-center">
+        <Input value={value} onChange={(e) => setValue(e.target.value)} />
+        {value && (
+          <CloseButton
+            aria-label="Clear"
+            onPress={() => setValue("")}
+          />
+        )}
+      </div>
+      <FieldError />
+    </TextField>
+    ```
+  </Tab>
+</Tabs>
+
+### Controlled Input
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { useState } from "react";
+
+    const [value, setValue] = useState("");
+
+    <Input
+      label="Email"
+      onValueChange={setValue}
+      type="email"
+      value={value}
+    />
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { useState } from "react";
+
+    const [value, setValue] = useState("");
+
+    <TextField name="email" type="email">
+      <Label>Email</Label>
+      <Input
+        onChange={(e) => setValue(e.target.value)}
+        value={value}
+      />
+      <FieldError />
+    </TextField>
+    ```
+  </Tab>
+</Tabs>
+
+## Summary
+
+1. **Component Split**: `Input` → `TextField` for form fields, `Input` for primitive input
+2. **Label Required**: Must use `Label` component instead of `label` prop
+3. **Error Display**: Must use `FieldError` component instead of `errorMessage` prop
+4. **Description**: Must use `Description` component instead of `description` prop
+5. **Validation**: Move `validate` function from `Input` to `TextField`
+6. **Start/End Content**: Use `InputGroup` with `InputGroup.Prefix`/`InputGroup.Suffix` inside `TextField`
+7. **Clear Button**: Implement manually with `CloseButton`
+8. **Variants Simplified**: v2 had multiple variants (flat, bordered, underlined, faded); v3 has `"primary"` (default) and `"secondary"` (for surfaces)
+9. **Full Width**: `fullWidth` prop is still available on both `Input` and `TextField`
+10. **Colors Removed**: Use Tailwind CSS classes
+11. **Sizes Removed**: Use Tailwind CSS classes
+12. **Radius Removed**: Use Tailwind CSS classes
+13. **onValueChange Removed**: Use `onChange` event handler
+14. **ClassNames Removed**: Use `className` props on individual components
+
+</page>
+
+---
+
+# Table Migration Guide
+
+**Component:** table
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/table.mdx
+
+---
+
+<page url="/docs/react/migration/table">
+# Table
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/table
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/table.mdx
+> Migration guide for Table from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Table documentation](/docs/react/components/table) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Structure Changes
+
+In v2, Table used separate named imports for each part:
+
+```tsx
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Table aria-label="Example table">
+      <TableHeader>
+        <TableColumn>Name</TableColumn>
+        <TableColumn>Role</TableColumn>
+      </TableHeader>
+      <TableBody>
+        <TableRow key="1">
+          <TableCell>Kate Moore</TableCell>
+          <TableCell>CEO</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+
+```
+
+In v3, Table uses the compound component pattern with dot notation and adds `Table.ScrollContainer` and `Table.Content`:
+
+```tsx
+import { Table } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content aria-label="Example table">
+          <Table.Header>
+            <Table.Column>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
+          </Table.Header>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell>Kate Moore</Table.Cell>
+              <Table.Cell>CEO</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
+  );
+}
+
+```
+
+## Key Changes
+
+### 1. Component Structure
+
+**v2:** Separate named imports (`Table`, `TableHeader`, `TableColumn`, `TableBody`, `TableRow`, `TableCell`)
+**v3:** Single import with dot notation: `Table`, `Table.ScrollContainer`, `Table.Content`, `Table.Header`, `Table.Column`, `Table.Body`, `Table.Row`, `Table.Cell`, `Table.Footer`
+
+### 2. New Wrapper Components
+
+* **`Table`** is now the root container (styling wrapper)
+* **`Table.ScrollContainer`** handles horizontal scrolling with custom scrollbar
+* **`Table.Content`** is the actual `<table>` element (where `aria-label`, `selectionMode`, `sortDescriptor` etc. go)
+* **`Table.Footer`** replaces `bottomContent` for pagination and other footer content
+
+### 3. Prop Changes
+
+| v2 Prop                        | v3 Equivalent                            | Notes                                                                |
+| ------------------------------ | ---------------------------------------- | -------------------------------------------------------------------- |
+| `aria-label`                   | `Table.Content` `aria-label`             | Moved to `Table.Content`                                             |
+| `selectionMode`                | `Table.Content` `selectionMode`          | Moved to `Table.Content`                                             |
+| `selectedKeys`                 | `Table.Content` `selectedKeys`           | Moved to `Table.Content`                                             |
+| `defaultSelectedKeys`          | `Table.Content` `defaultSelectedKeys`    | Moved to `Table.Content`                                             |
+| `onSelectionChange`            | `Table.Content` `onSelectionChange`      | Moved to `Table.Content`                                             |
+| `sortDescriptor`               | `Table.Content` `sortDescriptor`         | Moved to `Table.Content`                                             |
+| `onSortChange`                 | `Table.Content` `onSortChange`           | Moved to `Table.Content`                                             |
+| `disabledKeys`                 | `Table.Content` `disabledKeys`           | Moved to `Table.Content`                                             |
+| `disallowEmptySelection`       | `Table.Content` `disallowEmptySelection` | Moved to `Table.Content`                                             |
+| `selectionBehavior`            | `Table.Content` `selectionBehavior`      | Moved to `Table.Content`                                             |
+| `disabledBehavior`             | `Table.Content` `disabledBehavior`       | Moved to `Table.Content`                                             |
+| `onRowAction`                  | `Table.Content` `onRowAction`            | Moved to `Table.Content`                                             |
+| `onCellAction`                 | `Table.Content` `onCellAction`           | Moved to `Table.Content`                                             |
+| `topContent`                   | -                                        | Place content inside `Table` before `Table.ScrollContainer`          |
+| `bottomContent`                | -                                        | Use `Table.Footer`                                                   |
+| `topContentPlacement`          | -                                        | Removed (compose layout directly)                                    |
+| `bottomContentPlacement`       | -                                        | Removed (compose layout directly)                                    |
+| `color`                        | -                                        | Removed (use Tailwind CSS)                                           |
+| `variant`                      | `Table` `variant`                        | Changed to `"primary"` (card-style, default) or `"secondary"` (flat) |
+| `layout`                       | -                                        | Removed                                                              |
+| `radius`                       | -                                        | Removed (use Tailwind CSS)                                           |
+| `shadow`                       | -                                        | Removed (use Tailwind CSS)                                           |
+| `isStriped`                    | -                                        | Removed (use Tailwind CSS)                                           |
+| `isCompact`                    | -                                        | Removed (use Tailwind CSS)                                           |
+| `isHeaderSticky`               | -                                        | Removed (use Tailwind CSS `sticky top-0`)                            |
+| `fullWidth`                    | -                                        | Removed (full width by default)                                      |
+| `removeWrapper`                | -                                        | Removed (compose layout directly)                                    |
+| `hideHeader`                   | -                                        | Removed (omit `Table.Header` or use CSS)                             |
+| `isVirtualized`                | -                                        | Use React Aria `Virtualizer` wrapper                                 |
+| `maxTableHeight`               | -                                        | Use CSS or Virtualizer                                               |
+| `rowHeight`                    | -                                        | Use `TableLayout` with Virtualizer                                   |
+| `isKeyboardNavigationDisabled` | -                                        | Removed                                                              |
+| `disableAnimation`             | -                                        | Removed                                                              |
+| `classNames`                   | -                                        | Use `className` on individual compound components                    |
+
+### 4. Selection with Checkboxes
+
+**v2:** Checkboxes auto-rendered by the table when `selectionMode` is set
+**v3:** Use `Checkbox` with `slot="selection"` explicitly in columns and rows
+
+### 5. Loading and Empty States
+
+**v2:** `loadingState`, `loadingContent`, `emptyContent` props on `TableBody`
+**v3:** `renderEmptyState` prop on `Table.Body`; use `Table.LoadMore` for infinite scroll loading
+
+### 6. Pagination
+
+**v2:** `bottomContent` prop on `Table`
+**v3:** `Table.Footer` compound component
+
+### 7. Column Resizing
+
+**v2:** Not built-in
+**v3:** `Table.ResizableContainer` + `Table.ColumnResizer` compound components
+
+## Migration Examples
+
+### Basic Table
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
+
+    <Table aria-label="Users">
+      <TableHeader>
+        <TableColumn>Name</TableColumn>
+        <TableColumn>Role</TableColumn>
+        <TableColumn>Status</TableColumn>
+      </TableHeader>
+      <TableBody>
+        <TableRow key="1">
+          <TableCell>Kate Moore</TableCell>
+          <TableCell>CEO</TableCell>
+          <TableCell>Active</TableCell>
+        </TableRow>
+        <TableRow key="2">
+          <TableCell>John Doe</TableCell>
+          <TableCell>Developer</TableCell>
+          <TableCell>Active</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Table } from "@heroui/react";
+
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content aria-label="Users">
+          <Table.Header>
+            <Table.Column>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
+            <Table.Column>Status</Table.Column>
+          </Table.Header>
+          <Table.Body>
+            <Table.Row id="1">
+              <Table.Cell>Kate Moore</Table.Cell>
+              <Table.Cell>CEO</Table.Cell>
+              <Table.Cell>Active</Table.Cell>
+            </Table.Row>
+            <Table.Row id="2">
+              <Table.Cell>John Doe</Table.Cell>
+              <Table.Cell>Developer</Table.Cell>
+              <Table.Cell>Active</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
+    ```
+  </Tab>
+</Tabs>
+
+### Dynamic Rows
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    const columns = [
+      { key: "name", label: "Name" },
+      { key: "role", label: "Role" },
+    ];
+    const rows = [
+      { key: "1", name: "Kate", role: "CEO" },
+      { key: "2", name: "John", role: "Developer" },
+    ];
+
+    <Table aria-label="Users">
+      <TableHeader columns={columns}>
+        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <TableRow key={item.key}>
+            {(columnKey) => <TableCell>{item[columnKey]}</TableCell>}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    const columns = [
+      { id: "name", label: "Name" },
+      { id: "role", label: "Role" },
+    ];
+    const rows = [
+      { id: "1", name: "Kate", role: "CEO" },
+      { id: "2", name: "John", role: "Developer" },
+    ];
+
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content aria-label="Users">
+          <Table.Header columns={columns}>
+            {(column) => <Table.Column id={column.id}>{column.label}</Table.Column>}
+          </Table.Header>
+          <Table.Body items={rows}>
+            {(item) => (
+              <Table.Row id={item.id}>
+                <Table.Cell>{item.name}</Table.Cell>
+                <Table.Cell>{item.role}</Table.Cell>
+              </Table.Row>
+            )}
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
+    ```
+  </Tab>
+</Tabs>
+
+### Selection
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
+
+    <Table
+      aria-label="Users"
+      selectionMode="multiple"
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+    >
+      <TableHeader>
+        <TableColumn>Name</TableColumn>
+        <TableColumn>Role</TableColumn>
+      </TableHeader>
+      <TableBody>
+        <TableRow key="1">
+          <TableCell>Kate</TableCell>
+          <TableCell>CEO</TableCell>
+        </TableRow>
+        <TableRow key="2">
+          <TableCell>John</TableCell>
+          <TableCell>Developer</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Table, Checkbox } from "@heroui/react";
+
+    const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
+
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content
+          aria-label="Users"
+          selectionMode="multiple"
+          selectedKeys={selectedKeys}
+          onSelectionChange={setSelectedKeys}
+        >
+          <Table.Header>
+            <Table.Column>
+              <Checkbox slot="selection" />
+            </Table.Column>
+            <Table.Column>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
+          </Table.Header>
+          <Table.Body>
+            <Table.Row id="1">
+              <Table.Cell>
+                <Checkbox slot="selection" />
+              </Table.Cell>
+              <Table.Cell>Kate</Table.Cell>
+              <Table.Cell>CEO</Table.Cell>
+            </Table.Row>
+            <Table.Row id="2">
+              <Table.Cell>
+                <Checkbox slot="selection" />
+              </Table.Cell>
+              <Table.Cell>John</Table.Cell>
+              <Table.Cell>Developer</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
+    ```
+  </Tab>
+</Tabs>
+
+### Sorting
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    const [sortDescriptor, setSortDescriptor] = useState({
+      column: "name",
+      direction: "ascending",
+    });
+
+    <Table
+      aria-label="Users"
+      sortDescriptor={sortDescriptor}
+      onSortChange={setSortDescriptor}
+    >
+      <TableHeader>
+        <TableColumn key="name" allowsSorting>Name</TableColumn>
+        <TableColumn key="role" allowsSorting>Role</TableColumn>
+      </TableHeader>
+      <TableBody items={sortedItems}>
+        {(item) => (
+          <TableRow key={item.key}>
+            {(columnKey) => <TableCell>{item[columnKey]}</TableCell>}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    const [sortDescriptor, setSortDescriptor] = useState({
+      column: "name",
+      direction: "ascending",
+    });
+
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content
+          aria-label="Users"
+          sortDescriptor={sortDescriptor}
+          onSortChange={setSortDescriptor}
+        >
+          <Table.Header>
+            <Table.Column id="name" allowsSorting>Name</Table.Column>
+            <Table.Column id="role" allowsSorting>Role</Table.Column>
+          </Table.Header>
+          <Table.Body items={sortedItems}>
+            {(item) => (
+              <Table.Row id={item.id}>
+                <Table.Cell>{item.name}</Table.Cell>
+                <Table.Cell>{item.role}</Table.Cell>
+              </Table.Row>
+            )}
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
+    ```
+  </Tab>
+</Tabs>
+
+### With Pagination (Bottom Content)
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Table
+      aria-label="Users"
+      bottomContent={
+        <Pagination total={10} page={page} onChange={setPage} />
+      }
+      bottomContentPlacement="outside"
+    >
+      {/* ... */}
+    </Table>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content aria-label="Users">
+          {/* Header and Body */}
+        </Table.Content>
+      </Table.ScrollContainer>
+      <Table.Footer>
+        {/* Pagination component */}
+      </Table.Footer>
+    </Table>
+    ```
+  </Tab>
+</Tabs>
+
+### Empty State
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <TableBody emptyContent="No rows to display.">
+      {[]}
+    </TableBody>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Table.Body
+      items={[]}
+      renderEmptyState={() => (
+        <p className="text-center py-4">No rows to display.</p>
+      )}
+    >
+      {[]}
+    </Table.Body>
+    ```
+  </Tab>
+</Tabs>
+
+## Styling Changes
+
+### v2: `classNames` Prop
+
+```tsx
+<Table
+  classNames={{
+    base: "custom-base",
+    wrapper: "custom-wrapper",
+    table: "custom-table",
+    thead: "custom-header",
+    tbody: "custom-body",
+    tr: "custom-row",
+    th: "custom-column",
+    td: "custom-cell",
+  }}
+/>
+
+```
+
+### v3: Direct `className` Props
+
+```tsx
+<Table className="custom-base">
+  <Table.ScrollContainer className="custom-wrapper">
+    <Table.Content aria-label="Table" className="custom-table">
+      <Table.Header className="custom-header">
+        <Table.Column className="custom-column">Name</Table.Column>
+      </Table.Header>
+      <Table.Body className="custom-body">
+        <Table.Row className="custom-row">
+          <Table.Cell className="custom-cell">Value</Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table.Content>
+  </Table.ScrollContainer>
+</Table>
+
+```
+
+## Component Anatomy
+
+The v3 Table follows this structure:
+
+```
+
+Table (Root container)
+  ├── Table.ScrollContainer (horizontal scroll)
+  │   └── Table.Content (<table> element, aria-label, selectionMode, etc.)
+  │       ├── Table.Header (<thead>)
+  │       │   └── Table.Column (<th>, allowsSorting, etc.)
+  │       │       └── Table.ColumnResizer (optional)
+  │       └── Table.Body (<tbody>, items, renderEmptyState)
+  │           ├── Table.Row (<tr>)
+  │           │   └── Table.Cell (<td>)
+  │           └── Table.LoadMore (optional, infinite scroll)
+  │               └── Table.LoadMoreContent
+  └── Table.Footer (optional, pagination, etc.)
+
+```
+
+## Item Identity
+
+**v2:** React's `key` was used for both list reconciliation and selection state.
+**v3:** Use `id` on `Table.Row` and `Table.Column` for selection/sort state; keep React's `key` for lists.
+
+## Summary
+
+1. **Imports**: Separate named imports → single `Table` import with dot notation
+2. **New Wrappers**: `Table.ScrollContainer` and `Table.Content` wrap the table structure
+3. **Props Moved**: `aria-label`, `selectionMode`, `sortDescriptor`, etc. moved from `Table` to `Table.Content`
+4. **Bottom Content**: `bottomContent` prop → `Table.Footer` compound component
+5. **Top Content**: `topContent` prop → place content inside `Table` before `Table.ScrollContainer`
+6. **Selection Checkboxes**: Auto-rendered → explicit `Checkbox` with `slot="selection"`
+7. **Empty State**: `emptyContent` prop → `renderEmptyState` on `Table.Body`
+8. **Loading**: `loadingState`/`loadingContent` → `Table.LoadMore` for infinite scroll
+9. **Column Resizing**: New `Table.ResizableContainer` and `Table.ColumnResizer`
+10. **Item Identity**: `key` → `id` on rows and columns
+11. **Styling Props Removed**: `color`, `radius`, `shadow`, `isStriped`, `isCompact` → use Tailwind CSS
+12. **ClassNames Removed**: Use `className` on individual compound components
+
+</page>
+
+---
+
+# Tooltip Migration Guide
+
+**Component:** tooltip
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/tooltip.mdx
+
+---
+
+<page url="/docs/react/migration/tooltip">
+# Tooltip
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/tooltip
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/tooltip.mdx
+> Migration guide for Tooltip from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Tooltip documentation](/docs/react/components/tooltip) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Structure Changes
+
+In v2, Tooltip used a `content` prop:
+
+```tsx
+import { Tooltip, Button } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Tooltip content="I am a tooltip">
+      <Button>Hover me</Button>
+    </Tooltip>
+  );
+}
+
+```
+
+In v3, Tooltip requires compound components:
+
+```tsx
+import { Tooltip, Button } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Tooltip>
+      <Tooltip.Trigger>
+        <Button>Hover me</Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        I am a tooltip
+      </Tooltip.Content>
+    </Tooltip>
+  );
+}
+
+```
+
+## Key Changes
+
+### 1. Component Structure
+
+**v2:** Simple Tooltip with `content` prop and children as trigger\
+**v3:** Compound components (`Tooltip.Trigger`, `Tooltip.Content`, `Tooltip.Arrow`)
+
+### 2. Prop Changes
+
+| v2 Prop                           | v3 Location              | Notes                                                    |
+| --------------------------------- | ------------------------ | -------------------------------------------------------- |
+| `content`                         | —                        | Use `Tooltip.Content` children                           |
+| `showArrow`                       | `showArrow` (on Content) | Moved to `Tooltip.Content`                               |
+| `placement`                       | `placement` (on Content) | Moved to `Tooltip.Content`                               |
+| `offset`                          | `offset` (on Content)    | Moved to `Tooltip.Content`                               |
+| `color`                           | —                        | Removed (use Tailwind CSS)                               |
+| `size`                            | —                        | Removed (use Tailwind CSS)                               |
+| `radius`                          | —                        | Removed (use Tailwind CSS)                               |
+| `shadow`                          | —                        | Removed (use Tailwind CSS)                               |
+| `classNames`                      | —                        | Use `className` props on individual components           |
+| `motionProps`                     | —                        | Removed (animations handled differently)                 |
+| `trigger`                         | `trigger` (on root)      | Still exists: `"hover"` \| `"focus"` (default `"hover"`) |
+| `isDisabled`                      | `isDisabled` (on root)   | New in v3: disables the tooltip entirely                 |
+| `delay`                           | `delay` (on root)        | Still exists (default changed from `0` to `700`)         |
+| `closeDelay`                      | `closeDelay` (on root)   | Still exists (default `0`)                               |
+| `portalContainer`                 | —                        | Not exposed                                              |
+| `updatePositionDeps`              | —                        | Not exposed                                              |
+| `containerPadding`, `crossOffset` | —                        | Not exposed                                              |
+| `shouldFlip`                      | —                        | Handled automatically                                    |
+| `triggerScaleOnOpen`              | —                        | Not available                                            |
+| `isKeyboardDismissDisabled`       | —                        | Not available                                            |
+| `isDismissable`                   | —                        | Not available                                            |
+| `shouldCloseOnBlur`               | —                        | Not available                                            |
+| `shouldCloseOnInteractOutside`    | —                        | Not available                                            |
+| `onClose`                         | —                        | Use `onOpenChange` instead                               |
+
+### 3. Props Moved to Tooltip.Content
+
+* `showArrow` - Now on `Tooltip.Content`
+* `placement` - Now on `Tooltip.Content`
+* `offset` - Now on `Tooltip.Content`
+
+## Migration Examples
+
+### Content Configuration
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* With arrow */}
+    <Tooltip content="I am a tooltip" showArrow>
+      <Button>Hover me</Button>
+    </Tooltip>
+
+    {/* With placement */}
+    <Tooltip content="Tooltip" placement="bottom">
+      <Button>Hover me</Button>
+    </Tooltip>
+
+    {/* With offset */}
+    <Tooltip content="Tooltip" offset={12}>
+      <Button>Hover me</Button>
+    </Tooltip>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    {/* With arrow */}
+    <Tooltip delay={0}>
+      <Tooltip.Trigger>
+        <Button>Hover me</Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content showArrow>
+        <Tooltip.Arrow />
+        <p>I am a tooltip</p>
+      </Tooltip.Content>
+    </Tooltip>
+
+    {/* With placement */}
+    <Tooltip delay={0}>
+      <Tooltip.Trigger>
+        <Button>Hover me</Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content placement="bottom">
+        <p>Tooltip</p>
+      </Tooltip.Content>
+    </Tooltip>
+
+    {/* With offset */}
+    <Tooltip delay={0}>
+      <Tooltip.Trigger>
+        <Button>Hover me</Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content offset={12}>
+        <p>Tooltip</p>
+      </Tooltip.Content>
+    </Tooltip>
+    ```
+  </Tab>
+</Tabs>
+
+### Controlled Tooltip
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { useState } from "react";
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    <Tooltip
+      content="I am a tooltip"
+      isOpen={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      <Button>Hover me</Button>
+    </Tooltip>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { useState } from "react";
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    <Tooltip isOpen={isOpen} onOpenChange={setIsOpen} delay={0}>
+      <Tooltip.Trigger>
+        <Button>Hover me</Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        <p>I am a tooltip</p>
+      </Tooltip.Content>
+    </Tooltip>
+    ```
+  </Tab>
+</Tabs>
+
+### With Delay
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Tooltip content="Tooltip" delay={500} closeDelay={200}>
+      <Button>Hover me</Button>
+    </Tooltip>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Tooltip delay={500} closeDelay={200}>
+      <Tooltip.Trigger>
+        <Button>Hover me</Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        <p>Tooltip</p>
+      </Tooltip.Content>
+    </Tooltip>
+    ```
+  </Tab>
+</Tabs>
+
+### Custom Content
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Tooltip
+      content={
+        <div>
+          <strong>Title</strong>
+          <p>Description</p>
+        </div>
+      }
+    >
+      <Button>Hover me</Button>
+    </Tooltip>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Tooltip delay={0}>
+      <Tooltip.Trigger>
+        <Button>Hover me</Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        <div>
+          <strong>Title</strong>
+          <p>Description</p>
+        </div>
+      </Tooltip.Content>
+    </Tooltip>
+    ```
+  </Tab>
+</Tabs>
+
+### With Custom Trigger
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Tooltip content="Tooltip">
+      <div className="custom-trigger">Custom trigger</div>
+    </Tooltip>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Tooltip delay={0}>
+      <Tooltip.Trigger className="custom-trigger">
+        <div>Custom trigger</div>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        <p>Tooltip</p>
+      </Tooltip.Content>
+    </Tooltip>
+    ```
+  </Tab>
+</Tabs>
+
+## Component Anatomy
+
+The v3 Tooltip follows this structure:
+
+```
+Tooltip (Root)
+  ├── Tooltip.Trigger
+  │   └── [Trigger element]
+  └── Tooltip.Content
+      ├── Tooltip.Arrow (optional)
+      └── [Tooltip content]
+
+```
+
+## New Props in v3
+
+### isDisabled
+
+The `isDisabled` prop allows you to completely disable the tooltip. When disabled, the tooltip will not appear on hover or focus:
+
+```tsx
+<Tooltip isDisabled>
+  <Tooltip.Trigger>
+    <Button>No tooltip</Button>
+  </Tooltip.Trigger>
+  <Tooltip.Content>
+    <p>This will not show</p>
+  </Tooltip.Content>
+</Tooltip>
+
+```
+
+### trigger
+
+The `trigger` prop controls how the tooltip is activated. It accepts `"hover"` (default) or `"focus"`:
+
+```tsx
+{/* Show tooltip only on focus */}
+<Tooltip trigger="focus">
+  <Tooltip.Trigger>
+    <Button>Focus me</Button>
+  </Tooltip.Trigger>
+  <Tooltip.Content>
+    <p>Shown on focus only</p>
+  </Tooltip.Content>
+</Tooltip>
+
+```
+
+### Custom Render Function
+
+`Tooltip.Content` and `Tooltip.Arrow` both support a `render` prop that allows you to override the default DOM element with a custom render function for advanced use cases.
+
+## Important Notes
+
+### Content Prop
+
+* **v2:** Used `content` prop for tooltip text/content
+* **v3:** Content goes as children of `Tooltip.Content` component
+
+### Arrow
+
+* **v2:** Controlled by `showArrow` prop on root
+* **v3:** Use `showArrow` prop on `Tooltip.Content` and include `Tooltip.Arrow` component
+
+### Placement and Offset
+
+* **v2:** `placement` and `offset` props on root
+* **v3:** `placement` and `offset` props moved to `Tooltip.Content`
+
+### Trigger Element
+
+* **v2:** Children were automatically used as trigger
+* **v3:** Must wrap trigger element in `Tooltip.Trigger` component
+
+### Default Delay
+
+* **v2:** `delay` default was `0`
+* **v3:** `delay` default is `700` (note: examples use `delay={0}` to match v2 behavior)
+
+## Summary
+
+1. **Component Structure**: Must use compound components (`Tooltip.Trigger`, `Tooltip.Content`, `Tooltip.Arrow`)
+2. **Content Prop Removed**: `content` prop removed - use `Tooltip.Content` children
+3. **Props Moved**: `showArrow`, `placement`, `offset` moved to `Tooltip.Content`
+4. **Styling Props Removed**: `color`, `size`, `radius`, `shadow` - use Tailwind CSS
+5. **ClassNames Removed**: Use `className` props on individual components
+6. **Motion Props Removed**: `motionProps` removed - animations handled differently
+7. **Advanced Props Removed**: Many positioning and behavior props removed
+8. **Default Delay Changed**: Default delay changed from `0` to `700`
+9. **isDisabled Prop**: New `isDisabled` prop to completely disable the tooltip
+10. **trigger Prop**: Accepts `"hover"` (default) or `"focus"` to control activation method
+11. **Render Props**: `Tooltip.Content` and `Tooltip.Arrow` support a `render` prop for custom DOM rendering
+
+</page>
+
+---
+
+# Checkbox Migration Guide
+
+**Component:** checkbox
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/checkbox.mdx
+
+---
+
+<page url="/docs/react/migration/checkbox">
+# Checkbox
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/checkbox
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/checkbox.mdx
+> Migration guide for Checkbox from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Checkbox documentation](/docs/react/components/checkbox) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Structure Changes
+
+In v2, `Checkbox` accepted children as the label:
+
+```tsx
+import { Checkbox } from "@heroui/react";
+
+export default function App() {
+  return <Checkbox defaultSelected>Option</Checkbox>;
+}
+
+```
+
+In v3, Checkbox uses a compound component pattern with explicit subcomponents:
+
+```tsx
+import { Checkbox, Label } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Checkbox defaultSelected id="option">
+      <Checkbox.Control>
+        <Checkbox.Indicator />
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Label htmlFor="option">Option</Label>
+      </Checkbox.Content>
+    </Checkbox>
+  );
+}
+
+```
+
+## Key Changes
+
+### 1. Component Structure
+
+**v2:** Simple component with children as label\
+**v3:** Compound components: `Checkbox.Control`, `Checkbox.Indicator`, `Checkbox.Content`
+
+### 2. Label Handling
+
+**v2:** Label passed as children directly to `Checkbox`\
+**v3:** Label must be wrapped in `Checkbox.Content` using the `Label` component
+
+### 3. Prop Changes
+
+| v2 Prop            | v3 Location | Notes                                                                       |
+| ------------------ | ----------- | --------------------------------------------------------------------------- |
+| `onValueChange`    | `Checkbox`  | Use `onChange`                                                              |
+| `color`            | -           | Removed (use Tailwind on Checkbox.Control)                                  |
+| `size`             | -           | Removed (use Tailwind e.g. `size-4`, `size-5`)                              |
+| `radius`           | -           | Removed (use Tailwind e.g. `rounded-sm`)                                    |
+| `lineThrough`      | -           | Removed (use Tailwind `line-through` on label)                              |
+| `icon`             | -           | Use custom content in `Checkbox.Indicator`                                  |
+| `classNames`       | -           | Use `className` on parts                                                    |
+| `disableAnimation` | -           | Removed                                                                     |
+| —                  | `variant`   | New prop: `"primary"` (default) or `"secondary"` for lower emphasis styling |
+
+### 4. CheckboxGroup Changes
+
+**v2:** `CheckboxGroup` (separate component) with `label` prop and simple `Checkbox` children\
+**v3:** `CheckboxGroup` (separate component) with `Label`/`Description` as children and compound `Checkbox` structure
+
+For migrating checkbox groups, see the [CheckboxGroup migration guide](/docs/react/migration/checkbox-group).
+
+## Migration Examples
+
+### Controlled Checkbox
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { useState } from "react";
+
+    const [isSelected, setIsSelected] = useState(false);
+
+    <Checkbox isSelected={isSelected} onValueChange={setIsSelected}>
+      Subscribe
+    </Checkbox>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { useState } from "react";
+    import { Label } from "@heroui/react";
+
+    const [isSelected, setIsSelected] = useState(false);
+
+    <Checkbox id="subscribe" isSelected={isSelected} onChange={setIsSelected}>
+      <Checkbox.Control>
+        <Checkbox.Indicator />
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Label htmlFor="subscribe">Subscribe</Label>
+      </Checkbox.Content>
+    </Checkbox>
+    ```
+  </Tab>
+</Tabs>
+
+### Checkbox with Description
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* v2 doesn't have built-in description support */}
+    <Checkbox defaultSelected>
+      Option
+    </Checkbox>
+    <p className="text-sm text-default-500">Description text</p>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Checkbox, Label, Description } from "@heroui/react";
+
+    <Checkbox id="option" defaultSelected>
+      <Checkbox.Control>
+        <Checkbox.Indicator />
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Label htmlFor="option">Option</Label>
+        <Description>Description text</Description>
+      </Checkbox.Content>
+    </Checkbox>
+    ```
+  </Tab>
+</Tabs>
+
+### CheckboxGroup
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { Checkbox, CheckboxGroup } from "@heroui/react";
+
+    <CheckboxGroup label="Select cities">
+      <Checkbox value="buenos-aires">Buenos Aires</Checkbox>
+      <Checkbox value="sydney">Sydney</Checkbox>
+      <Checkbox value="san-francisco">San Francisco</Checkbox>
+    </CheckboxGroup>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { CheckboxGroup, Checkbox, Label, Description } from "@heroui/react";
+
+    <CheckboxGroup name="cities">
+      <Label>Select cities</Label>
+      <Description>Choose all that apply</Description>
+      <Checkbox value="buenos-aires">
+        <Checkbox.Control>
+          <Checkbox.Indicator />
+        </Checkbox.Control>
+        <Checkbox.Content>
+          <Label>Buenos Aires</Label>
+        </Checkbox.Content>
+      </Checkbox>
+      <Checkbox value="sydney">
+        <Checkbox.Control>
+          <Checkbox.Indicator />
+        </Checkbox.Control>
+        <Checkbox.Content>
+          <Label>Sydney</Label>
+        </Checkbox.Content>
+      </Checkbox>
+      <Checkbox value="san-francisco">
+        <Checkbox.Control>
+          <Checkbox.Indicator />
+        </Checkbox.Control>
+        <Checkbox.Content>
+          <Label>San Francisco</Label>
+        </Checkbox.Content>
+      </Checkbox>
+    </CheckboxGroup>
+    ```
+  </Tab>
+</Tabs>
+
+### Colors and Sizes
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* Colors */}
+    <Checkbox defaultSelected color="primary">Primary</Checkbox>
+
+    {/* Sizes */}
+    <Checkbox defaultSelected size="md">Medium</Checkbox>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    {/* Colors - use Tailwind classes */}
+    <Checkbox defaultSelected id="primary">
+      <Checkbox.Control className="data-[selected=true]:bg-primary data-[selected=true]:border-primary">
+        <Checkbox.Indicator />
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Label htmlFor="primary">Primary</Label>
+      </Checkbox.Content>
+    </Checkbox>
+
+    {/* Sizes - use Tailwind classes */}
+    <Checkbox defaultSelected id="medium">
+      <Checkbox.Control className="size-5">
+        <Checkbox.Indicator />
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Label htmlFor="medium">Medium</Label>
+      </Checkbox.Content>
+    </Checkbox>
+    ```
+  </Tab>
+</Tabs>
+
+### Custom Icon/Indicator
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Checkbox defaultSelected icon={<HeartIcon />}>
+      Option
+    </Checkbox>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Checkbox defaultSelected id="option">
+      <Checkbox.Control>
+        <Checkbox.Indicator>
+          {({isSelected}) => isSelected ? <HeartIcon /> : null}
+        </Checkbox.Indicator>
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Label htmlFor="option">Option</Label>
+      </Checkbox.Content>
+    </Checkbox>
+    ```
+  </Tab>
+</Tabs>
+
+### Variants
+
+v3 introduces a `variant` prop with `"primary"` (default) and `"secondary"` options:
+
+```tsx
+{/* Primary variant (default) */}
+<Checkbox variant="primary" id="primary-option">
+  <Checkbox.Control>
+    <Checkbox.Indicator />
+  </Checkbox.Control>
+  <Checkbox.Content>
+    <Label htmlFor="primary-option">Primary</Label>
+  </Checkbox.Content>
+</Checkbox>
+
+{/* Secondary variant - lower emphasis, suitable for Surface components */}
+<Checkbox variant="secondary" id="secondary-option">
+  <Checkbox.Control>
+    <Checkbox.Indicator />
+  </Checkbox.Control>
+  <Checkbox.Content>
+    <Label htmlFor="secondary-option">Secondary</Label>
+  </Checkbox.Content>
+</Checkbox>
+
+```
+
+### Indeterminate State
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Checkbox isIndeterminate>Option</Checkbox>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Checkbox isIndeterminate id="option">
+      <Checkbox.Control>
+        <Checkbox.Indicator />
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Label htmlFor="option">Option</Label>
+      </Checkbox.Content>
+    </Checkbox>
+    ```
+  </Tab>
+</Tabs>
+
+## Render Props Pattern
+
+v3 Checkbox supports a render prop pattern that provides state information:
+
+```tsx
+<Checkbox id="terms">
+  {({isSelected, isIndeterminate, isHovered, isPressed, isFocused, isDisabled}) => (
+    <>
+      <Checkbox.Control>
+        <Checkbox.Indicator />
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Label htmlFor="terms">
+          {isSelected ? "Terms accepted" : "Accept terms"}
+        </Label>
+      </Checkbox.Content>
+    </>
+  )}
+</Checkbox>
+
+```
+
+`Checkbox.Indicator` also supports a render prop pattern, providing the same state values. This is useful for rendering custom indicator content based on the checkbox state:
+
+```tsx
+<Checkbox id="custom">
+  <Checkbox.Control>
+    <Checkbox.Indicator>
+      {({isSelected, isIndeterminate}) =>
+        isIndeterminate ? <MinusIcon /> : isSelected ? <CheckIcon /> : null
+      }
+    </Checkbox.Indicator>
+  </Checkbox.Control>
+  <Checkbox.Content>
+    <Label htmlFor="custom">Custom indicator</Label>
+  </Checkbox.Content>
+</Checkbox>
+
+```
+
+Available render props:
+
+* `isSelected` - Whether checkbox is checked
+* `isIndeterminate` - Whether checkbox is in indeterminate state
+* `isHovered` - Whether checkbox is hovered
+* `isPressed` - Whether checkbox is currently pressed
+* `isFocused` - Whether checkbox is focused
+* `isFocusVisible` - Whether checkbox should show focus indicator
+* `isDisabled` - Whether checkbox is disabled
+* `isReadOnly` - Whether checkbox is read only
+
+## Styling Changes
+
+### v2: `classNames` Prop
+
+```tsx
+<Checkbox 
+  classNames={{
+    base: "custom-base",
+    wrapper: "custom-wrapper",
+    icon: "custom-icon",
+    label: "custom-label"
+  }}
+/>
+
+```
+
+### v3: Direct `className` Props
+
+```tsx
+<Checkbox className="custom-base" id="option">
+  <Checkbox.Control className="custom-control">
+    <Checkbox.Indicator className="custom-indicator" />
+  </Checkbox.Control>
+  <Checkbox.Content className="custom-content">
+    <Label htmlFor="option" className="custom-label">
+      Option
+    </Label>
+  </Checkbox.Content>
+</Checkbox>
+
+```
+
+## Component Anatomy
+
+The v3 Checkbox follows this structure:
+
+```
+
+Checkbox (Root)
+  ├── Checkbox.Control
+  │   └── Checkbox.Indicator
+  └── Checkbox.Content (optional)
+      ├── Label (required if using Content)
+      └── Description (optional)
+
+```
+
+## Summary
+
+1. **Component Structure**: Must use compound components (`Control`, `Indicator`, `Content`)
+2. **Label Handling**: Labels must use `Label` component inside `Checkbox.Content`
+3. **onValueChange → onChange**: Event handler prop renamed
+4. **Color Removed**: Use Tailwind CSS classes on `Checkbox.Control`
+5. **Size Removed**: Use Tailwind CSS classes on `Checkbox.Control`
+6. **Radius Removed**: Use Tailwind CSS classes on `Checkbox.Control`
+7. **LineThrough Removed**: Use Tailwind `line-through` class on label
+8. **Icon Prop Removed**: Use custom content in `Checkbox.Indicator`
+9. **CheckboxGroup**: Same component name; use `Label`/`Description` as children and compound `Checkbox` structure
+10. **ClassNames Removed**: Use `className` props on individual components
+11. **New `variant` Prop**: Supports `"primary"` (default) and `"secondary"` for lower emphasis styling
+12. **Indicator Render Props**: `Checkbox.Indicator` accepts a render function with state values (`isSelected`, `isIndeterminate`, etc.)
+
+</page>
+
+---
+
+# Breadcrumbs Migration Guide
+
+**Component:** breadcrumbs
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/breadcrumbs.mdx
+
+---
+
+<page url="/docs/react/migration/breadcrumbs">
+# Breadcrumbs
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/breadcrumbs
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/breadcrumbs.mdx
+> Migration guide for Breadcrumbs from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Breadcrumbs documentation](/docs/react/components/breadcrumbs) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Structure Changes
+
+In v2, `Breadcrumbs` accepted an `items` prop or children:
+
+```tsx
+import { Breadcrumbs, BreadcrumbItem } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Breadcrumbs>
+      <BreadcrumbItem href="#">Home</BreadcrumbItem>
+      <BreadcrumbItem href="#">Products</BreadcrumbItem>
+      <BreadcrumbItem>Current Page</BreadcrumbItem>
+    </Breadcrumbs>
+  );
+}
+
+```
+
+In v3, Breadcrumbs uses a compound component pattern with `Breadcrumbs` and `BreadcrumbsItem`:
+
+```tsx
+import { Breadcrumbs, BreadcrumbsItem } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Breadcrumbs>
+      <BreadcrumbsItem href="#">Home</BreadcrumbsItem>
+      <BreadcrumbsItem href="#">Products</BreadcrumbsItem>
+      <BreadcrumbsItem>Current Page</BreadcrumbsItem>
+    </Breadcrumbs>
+  );
+}
+
+```
+
+## Key Changes
+
+### 1. Component Name: `BreadcrumbItem` → `BreadcrumbsItem`
+
+**v2:** Used `BreadcrumbItem` (singular)\
+**v3:** Uses `BreadcrumbsItem` (plural)
+
+### 2. Separator Customization
+
+**v2:** Separator was customizable via props\
+**v3:** Separator is customizable via `separator` prop on `Breadcrumbs` root
+
+### 3. Built-in Link Component
+
+**v2:** Items could be links or text\
+**v3:** Items automatically use the `Link` component when `href` is provided
+
+### 4. Prop Changes
+
+| v2 Prop                                                       | v3 Location          | Notes                                                         |
+| ------------------------------------------------------------- | -------------------- | ------------------------------------------------------------- |
+| `maxItems`                                                    | -                    | Removed (render all items or implement collapse manually)     |
+| `itemsBeforeCollapse`, `itemsAfterCollapse`, `renderEllipsis` | -                    | Removed (collapse/ellipsis removed with maxItems)             |
+| `items` (prop pattern)                                        | -                    | Use children instead                                          |
+| `onAction`                                                    | -                    | Use `onPress` on individual items if needed                   |
+| `isDisabled`                                                  | `isDisabled` on root | Now supported on root - disables all breadcrumb links at once |
+| `classNames`, `itemClasses`                                   | -                    | Use `className` on Breadcrumbs and BreadcrumbsItem            |
+
+### 5. `isDisabled` Prop on Root
+
+**v2:** `isDisabled` was not available on the root component
+**v3:** `isDisabled` is supported on the `Breadcrumbs` root, disabling all breadcrumb links at once
+
+### 6. Automatic `aria-current="page"` Behavior
+
+**v3:** The last breadcrumb item (the one without `href`) automatically receives `aria-current="page"`, indicating the current page to assistive technologies. No manual configuration is needed.
+
+### 7. React Aria Components Integration
+
+**v3:** Built on React Aria Components for better accessibility and keyboard navigation support
+
+## Migration Examples
+
+### Custom Separator
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Breadcrumbs separator="/">
+      <BreadcrumbItem href="#">Home</BreadcrumbItem>
+      <BreadcrumbItem>Current</BreadcrumbItem>
+    </Breadcrumbs>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Icon } from "@iconify/react";
+    import { Breadcrumbs, BreadcrumbsItem } from "@heroui/react";
+
+    <Breadcrumbs separator={<Icon icon="gravity-ui:caret-right" />}>
+      <BreadcrumbsItem href="#">Home</BreadcrumbsItem>
+      <BreadcrumbsItem>Current</BreadcrumbsItem>
+    </Breadcrumbs>
+    ```
+  </Tab>
+</Tabs>
+
+### Disabled State
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* v2 did not support isDisabled on the root */}
+    <Breadcrumbs>
+      <BreadcrumbItem href="#">Home</BreadcrumbItem>
+      <BreadcrumbItem>Current</BreadcrumbItem>
+    </Breadcrumbs>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    {/* v3 supports isDisabled on root to disable all links */}
+    <Breadcrumbs isDisabled>
+      <BreadcrumbsItem href="#">Home</BreadcrumbsItem>
+      <BreadcrumbsItem>Current</BreadcrumbsItem>
+    </Breadcrumbs>
+    ```
+  </Tab>
+</Tabs>
+
+## Summary
+
+* Rename `BreadcrumbItem` to `BreadcrumbsItem`
+* Set `separator` on the root; it can be a string or a React element (e.g. an icon)
+* Items use the built-in Link when `href` is provided
+* `isDisabled` now supported on root to disable all breadcrumb links at once
+* The last item (without `href`) automatically gets `aria-current="page"` for accessibility
+* No `maxItems` / collapse in v3—show all items or implement yourself; use `className` instead of `classNames` / `itemClasses`
+* Built on React Aria Components for accessibility
+
+</page>
+
+---
+
+# Link Migration Guide
+
+**Component:** link
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/link.mdx
+
+---
+
+<page url="/docs/react/migration/link">
+# Link
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/link
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/link.mdx
+> Migration guide for Link from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Link documentation](/docs/react/components/link) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Key Changes
+
+### 1. Component Structure
+
+**v2:** Single component with icon props\
+**v3:** Compound component: `Link.Icon` for icons
+
+### 2. Prop Changes
+
+| v2 Prop                        | v3 Location | Notes                                                 |
+| ------------------------------ | ----------- | ----------------------------------------------------- |
+| `showAnchorIcon`, `anchorIcon` | -           | Use `Link.Icon` component with children               |
+| `isExternal`                   | -           | Use `target="_blank"` and `rel="noopener noreferrer"` |
+| `size`, `color`, `isBlock`     | -           | Removed (use Tailwind CSS)                            |
+| `disableAnimation`             | -           | Removed                                               |
+| `underline`                    | -           | Removed (use Tailwind `underline`, etc.)              |
+
+### 3. New Props
+
+* `onPress` - Event handler fired when the link is activated (via click or keyboard). Accepts a `(e: PressEvent) => void` callback.
+
+## Structure Changes
+
+In v2, Link component usage:
+
+```tsx
+import { Link } from "@heroui/react";
+
+export default function App() {
+  return <Link href="#">Default Link</Link>;
+}
+
+```
+
+In v3, Link component usage remains the same for basic cases:
+
+```tsx
+import { Link } from "@heroui/react";
+
+export default function App() {
+  return <Link href="#">Default Link</Link>;
+}
+
+```
+
+## Migration Examples
+
+### With Icons
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* Default icon */}
+    <Link showAnchorIcon href="#">
+      External Link
+    </Link>
+
+    {/* Custom icon */}
+    <Link
+      showAnchorIcon
+      anchorIcon={<CustomIcon />}
+      href="#"
+    >
+      Custom Icon
+    </Link>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    {/* Default icon */}
+    <Link href="#">
+      External Link
+      <Link.Icon />
+    </Link>
+
+    {/* Custom icon */}
+    <Link href="#">
+      Custom Icon
+      <Link.Icon>
+        <CustomIcon />
+      </Link.Icon>
+    </Link>
+    ```
+  </Tab>
+</Tabs>
+
+### External Link
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Link isExternal href="https://example.com">
+      External Link
+    </Link>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Link
+      href="https://example.com"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      External Link
+      <Link.Icon />
+    </Link>
+    ```
+  </Tab>
+</Tabs>
+
+### Underline and offset (v3: use Tailwind)
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Link href="#" underline="hover">
+      Hover to underline
+    </Link>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Link href="#" className="hover:underline">
+      Hover to underline
+    </Link>
+    <Link href="#" className="underline underline-offset-2">
+      Underline with offset
+    </Link>
+    ```
+  </Tab>
+</Tabs>
+
+### With routing libraries
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import NextLink from "next/link";
+    import { Link } from "@heroui/react";
+
+    <Link as={NextLink} href="/about">
+      About
+    </Link>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import NextLink from "next/link";
+    import { Link } from "@heroui/react";
+
+    {/* Style your router link with the same classes as Link; add an icon if needed */}
+    <NextLink href="/about" className="link hover:underline">
+      About
+    </NextLink>
+    ```
+  </Tab>
+</Tabs>
+
+## Component Anatomy
+
+The v3 Link follows this structure:
+
+```
+Link (Root)
+  ├── Link content (text)
+  └── Link.Icon (optional)
+
+```
+
+## Summary
+
+1. **Icon Handling**: `showAnchorIcon` and `anchorIcon` props replaced with `Link.Icon` component
+2. **External Links**: `isExternal` prop removed - handle manually with `target` and `rel`
+3. **Size Prop Removed**: Use Tailwind CSS classes (`text-sm`, `text-base`, `text-lg`)
+4. **Color Prop Removed**: Use Tailwind CSS classes (`text-primary`, `text-danger`, etc.)
+5. **Block Prop Removed**: Use Tailwind CSS classes (`block`, `hover:bg-surface`)
+6. **Underline**: No longer a prop; use Tailwind (`underline`, `hover:underline`, `no-underline`, `underline-offset-1`, etc.)
+7. **Routing**: v3 Link does not support `as` or `asChild`; use your router's Link with Tailwind classes (e.g. `link`, `link__icon`) for consistent styling
+8. **Animation Removed**: `disableAnimation` prop removed
+9. **`onPress` Handler**: New `onPress` prop available for handling link activation events (click or keyboard)
+
+</page>
+
+---
+
+# Accordion Migration Guide
+
+**Component:** accordion
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/accordion.mdx
+
+---
+
+<page url="/docs/react/migration/accordion">
+# Accordion
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/accordion
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/accordion.mdx
+> Migration guide for Accordion from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Accordion documentation](/docs/react/components/accordion) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Structure Changes
+
+In v2, `AccordionItem` was a self-contained component that accepted props for title, subtitle, content, and other elements:
+
+```tsx
+import { Accordion, AccordionItem } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Accordion>
+      <AccordionItem
+        key="1"
+        title="Accordion 1"
+      >
+        Content here
+      </AccordionItem>
+      <AccordionItem
+        key="2"
+        title="Accordion 2"
+      >
+        Content here
+      </AccordionItem>
+    </Accordion>
+  );
+}
+
+```
+
+In v3, Accordion uses a compound component pattern with explicit subcomponents:
+
+```tsx
+import { Accordion } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Accordion>
+      <Accordion.Item id="1">
+        <Accordion.Heading>
+          <Accordion.Trigger>
+            Accordion 1
+            <Accordion.Indicator />
+          </Accordion.Trigger>
+        </Accordion.Heading>
+        <Accordion.Panel>
+          <Accordion.Body>Content here</Accordion.Body>
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item id="2">
+        <Accordion.Heading>
+          <Accordion.Trigger>
+            Accordion 2
+            <Accordion.Indicator />
+          </Accordion.Trigger>
+        </Accordion.Heading>
+        <Accordion.Panel>
+          <Accordion.Body>Content here</Accordion.Body>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+  );
+}
+
+```
+
+## Key Changes
+
+### 1. Component Structure
+
+**v2:** Single `AccordionItem` component with props\
+**v3:** Compound components: `Accordion.Item`, `Accordion.Heading`, `Accordion.Trigger`, `Accordion.Panel`, `Accordion.Body`, `Accordion.Indicator`
+
+### 2. Prop Changes
+
+| v2 Prop                                                        | v3 Location | Notes                                                     |
+| -------------------------------------------------------------- | ----------- | --------------------------------------------------------- |
+| `selectedKeys`                                                 | `Accordion` | Renamed to `expandedKeys`; type `Iterable<Key>`           |
+| `defaultSelectedKeys`                                          | `Accordion` | Renamed to `defaultExpandedKeys`                          |
+| `onSelectionChange`                                            | `Accordion` | Renamed to `onExpandedChange`; `(keys: Set<Key>) => void` |
+| `selectionMode="multiple"`                                     | `Accordion` | Use `allowsMultipleExpanded` (boolean)                    |
+| `isCompact`                                                    | -           | Removed (use Tailwind CSS e.g. `text-sm`, `py-2`)         |
+| `hideIndicator`                                                | -           | Omit `<Accordion.Indicator />` to hide                    |
+| `disableAnimation`, `disableIndicatorAnimation`, `motionProps` | -           | Removed (animations not supported / use CSS)              |
+| `showDivider`, `dividerProps`                                  | -           | Removed (add dividers manually or use `Divider`)          |
+| `keepContentMounted`                                           | -           | Removed (content always mounted in v3)                    |
+| `selectionBehavior`, `disallowEmptySelection`                  | -           | Removed (not applicable)                                  |
+| `itemClasses`                                                  | -           | Use `className` on items                                  |
+| `startContent`                                                 | -           | Place content in `<Accordion.Trigger>`                    |
+| `title`, `subtitle`                                            | -           | Place content in `<Accordion.Trigger>`                    |
+
+### 3. Variants
+
+**v2 Variants:** `light`, `shadow`, `bordered`, `splitted`\
+**v3 Variants:** `default`, `surface`
+
+The v3 variants are simplified. To achieve similar effects to v2 variants:
+
+* **v2 `light`** → v3 `default`
+* **v2 `shadow`** → v3 `surface`
+* **v2 `bordered`** → v3 `default` + add border classes
+* **v2 `splitted`** → v3 `default` + add background color and spacing/margin between items
+
+### 4. Item Identification
+
+**v2:** React's `key` was used for both list reconciliation and expanded state.\
+**v3:** Use `id` on `Accordion.Item` for expanded state; keep React's `key` on items in lists.
+
+## Migration Examples
+
+### Controlled State
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { useState } from "react";
+    import { Accordion, AccordionItem } from "@heroui/react";
+
+    const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
+
+    <Accordion 
+      selectedKeys={selectedKeys} 
+      onSelectionChange={setSelectedKeys}
+    >
+      <AccordionItem key="1" title="Item 1">
+        Content 1
+      </AccordionItem>
+      <AccordionItem key="2" title="Item 2">
+        Content 2
+      </AccordionItem>
+    </Accordion>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { useState } from "react";
+    import { Accordion } from "@heroui/react";
+    import type { Key } from "@heroui/react";
+
+    const [expandedKeys, setExpandedKeys] = useState<Set<Key>>(new Set(["1"]));
+
+    <Accordion 
+      expandedKeys={expandedKeys} 
+      onExpandedChange={setExpandedKeys}
+    >
+      <Accordion.Item id="1">
+        <Accordion.Heading>
+          <Accordion.Trigger>
+            Item 1
+            <Accordion.Indicator />
+          </Accordion.Trigger>
+        </Accordion.Heading>
+        <Accordion.Panel>
+          <Accordion.Body>Content 1</Accordion.Body>
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item id="2">
+        <Accordion.Heading>
+          <Accordion.Trigger>
+            Item 2
+            <Accordion.Indicator />
+          </Accordion.Trigger>
+        </Accordion.Heading>
+        <Accordion.Panel>
+          <Accordion.Body>Content 2</Accordion.Body>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+    ```
+  </Tab>
+</Tabs>
+
+### With Subtitle and Start Content
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { Icon } from "@iconify/react";
+
+    <Accordion>
+      <AccordionItem 
+        key="1"
+        title="Accordion 1"
+        subtitle="Press to expand"
+        startContent={<Icon icon="gravity-ui:box" />}
+      >
+        Content here
+      </AccordionItem>
+    </Accordion>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Icon } from "@iconify/react";
+
+    <Accordion>
+      <Accordion.Item id="1">
+        <Accordion.Heading>
+          <Accordion.Trigger>
+            <Icon icon="gravity-ui:box" className="mr-2" />
+            <div className="flex flex-col">
+              <span>Accordion 1</span>
+              <span className="text-sm text-muted">Press to expand</span>
+            </div>
+            <Accordion.Indicator />
+          </Accordion.Trigger>
+        </Accordion.Heading>
+        <Accordion.Panel>
+          <Accordion.Body>Content here</Accordion.Body>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+    ```
+  </Tab>
+</Tabs>
+
+### Custom Indicator
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { Icon } from "@iconify/react";
+
+    <Accordion>
+      <AccordionItem 
+        key="1"
+        title="Item 1"
+        indicator={(props) => (
+          props.isOpen ? <Icon icon="mdi:minus" /> : <Icon icon="mdi:plus" />
+        )}
+      >
+        Content
+      </AccordionItem>
+    </Accordion>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Icon } from "@iconify/react";
+    import { useState } from "react";
+    import { Accordion } from "@heroui/react";
+    import type { Key } from "@heroui/react";
+
+    const [expandedKeys, setExpandedKeys] = useState<Set<Key>>(new Set());
+
+    <Accordion 
+      expandedKeys={expandedKeys}
+      onExpandedChange={setExpandedKeys}
+    >
+      <Accordion.Item id="1">
+        <Accordion.Heading>
+          <Accordion.Trigger>
+            Item 1
+            <Accordion.Indicator>
+              {expandedKeys.has("1") ? (
+                <Icon icon="gravity-ui:minus" />
+              ) : (
+                <Icon icon="gravity-ui:plus" />
+              )}
+            </Accordion.Indicator>
+          </Accordion.Trigger>
+        </Accordion.Heading>
+        <Accordion.Panel>
+          <Accordion.Body>Content</Accordion.Body>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+    ```
+  </Tab>
+</Tabs>
+
+### Disabled Items and Default Expanded Keys
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Accordion 
+      defaultExpandedKeys={["1"]}
+      disabledKeys={["2"]}
+    >
+      <AccordionItem key="1" title="Item 1">
+        Content 1
+      </AccordionItem>
+      <AccordionItem key="2" title="Item 2">
+        Content 2
+      </AccordionItem>
+    </Accordion>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Accordion defaultExpandedKeys={["1"]}>
+      <Accordion.Item id="1">
+        <Accordion.Heading>
+          <Accordion.Trigger>
+            Item 1
+            <Accordion.Indicator />
+          </Accordion.Trigger>
+        </Accordion.Heading>
+        <Accordion.Panel>
+          <Accordion.Body>Content 1</Accordion.Body>
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item id="2" isDisabled>
+        <Accordion.Heading>
+          <Accordion.Trigger>
+            Item 2
+            <Accordion.Indicator />
+          </Accordion.Trigger>
+        </Accordion.Heading>
+        <Accordion.Panel>
+          <Accordion.Body>Content 2</Accordion.Body>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+    ```
+  </Tab>
+</Tabs>
+
+## Styling Changes
+
+### v2: `classNames` Prop
+
+```tsx
+<AccordionItem 
+  classNames={{
+    base: "custom-base",
+    title: "custom-title",
+    content: "custom-content"
+  }}
+/>
+
+```
+
+### v3: Direct `className` Props
+
+```tsx
+<Accordion.Item className="custom-base">
+  <Accordion.Heading>
+    <Accordion.Trigger className="custom-title">
+      Title
+      <Accordion.Indicator />
+    </Accordion.Trigger>
+  </Accordion.Heading>
+  <Accordion.Panel>
+    <Accordion.Body className="custom-content">
+      Content
+    </Accordion.Body>
+  </Accordion.Panel>
+</Accordion.Item>
+
+```
+
+## Component Anatomy
+
+The v3 Accordion follows this structure:
+
+```
+
+Accordion (Root)
+  └── Accordion.Item
+      ├── Accordion.Heading
+      │   └── Accordion.Trigger
+      │       ├── [Your content: title, subtitle, icons, etc.]
+      │       └── Accordion.Indicator (optional)
+      └── Accordion.Panel
+          └── Accordion.Body
+              └── [Your content]
+
+```
+
+## Summary
+
+1. **Component Structure**: Must use compound components instead of props
+2. **State Props**: `selectedKeys` → `expandedKeys`, `onSelectionChange` → `onExpandedChange`
+3. **Multiple Selection**: `selectionMode="multiple"` → `allowsMultipleExpanded={true}`
+4. **Item identity**: Use `id` for expanded state; keep React's `key` for list reconciliation
+5. **Variants**: Reduced from 4 to 2 variants
+6. **Removed Props**: Many convenience props removed; use Tailwind CSS classes instead
+7. **Content Structure**: Title, subtitle, and start content must be manually placed in `Trigger`
+8. **Indicator**: Must be explicitly rendered; no automatic indicator
+
+</page>
+
+---
+
+# Avatar Migration Guide
+
+**Component:** avatar
+**Source:** https://heroui-git-docs-migration-heroui.vercel.app/docs/react/migration/avatar.mdx
+
+---
+
+<page url="/docs/react/migration/avatar">
+# Avatar
+
+**Category**: react
+**URL**: https://v3.heroui.com/docs/react/migration/avatar
+**Source**: https://raw.githubusercontent.com/heroui-inc/heroui/refs/heads/v3/apps/docs/content/docs/react/migration/(components)/avatar.mdx
+> Migration guide for Avatar from HeroUI v2 to v3
+
+
+<Callout type="info">
+  Refer to the [v3 Avatar documentation](/docs/react/components/avatar) for complete API reference, styling guide, and advanced examples. This guide only focuses on migrating from HeroUI v2.
+</Callout>
+
+## Structure Changes
+
+In v2, `Avatar` was a single component that accepted props for image source, name, fallback, and other elements:
+
+```tsx
+import { Avatar } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Avatar 
+      src="https://example.com/avatar.jpg"
+      name="John Doe"
+      showFallback
+    />
+  );
+}
+
+```
+
+In v3, Avatar uses a compound component pattern with explicit subcomponents:
+
+```tsx
+import { Avatar } from "@heroui/react";
+
+export default function App() {
+  return (
+    <Avatar>
+      <Avatar.Image src="https://example.com/avatar.jpg" alt="John Doe" />
+      <Avatar.Fallback>JD</Avatar.Fallback>
+    </Avatar>
+  );
+}
+
+```
+
+## Key Changes
+
+### 1. Component Structure
+
+**v2:** Single `Avatar` component with props\
+**v3:** Compound components: `Avatar`, `Avatar.Image`, `Avatar.Fallback`
+
+### 2. Prop Changes
+
+| v2 Prop                     | v3 Location       | Notes                                                     |
+| --------------------------- | ----------------- | --------------------------------------------------------- |
+| `src`                       | `Avatar.Image`    | Use `<Avatar.Image src="..." />`                          |
+| `name`                      | -                 | Generate initials and pass to `<Avatar.Fallback />`       |
+| `showFallback`              | -                 | Removed (fallback shown if image fails or not provided)   |
+| `fallback`, `icon`          | `Avatar.Fallback` | Place content in `<Avatar.Fallback />`                    |
+| `color`                     | `Avatar`          | Same; `primary` → `accent`, `secondary` → `default`       |
+| `variant`                   | `Avatar`          | New in v3; `"default"` \| `"soft"`                        |
+| `size`                      | `Avatar`          | Same                                                      |
+| `isBordered`                | -                 | Removed (use Tailwind e.g. `ring-2 ring-background`)      |
+| `radius`                    | -                 | Removed (use Tailwind e.g. `rounded-full`)                |
+| `isDisabled`, `isFocusable` | -                 | Removed (use Tailwind / `asChild` if needed)              |
+| `getInitials`               | -                 | Generate initials manually                                |
+| `ImgComponent`, `imgProps`  | -                 | Use `asChild` on `Avatar.Image` if needed                 |
+| `onError`                   | `Avatar.Image`    | Use `onError` on `<Avatar.Image />`                       |
+| -                           | `Avatar.Image`    | New: `srcSet`, `sizes`, `loading` for responsive images   |
+| -                           | `Avatar.Fallback` | New: `delayMs` to delay fallback display (prevents flash) |
+| `classNames`                | -                 | Use `className` on parts                                  |
+| AvatarGroup                 | -                 | No v3 equivalent; create groups with CSS                  |
+
+### 3. Variant Prop (New in v3)
+
+**v2:** No `variant` prop; styling controlled only through `color`
+**v3:** New `variant` prop with `"default"` and `"soft"` options. The `"soft"` variant applies a lighter background style.
+
+```tsx
+<Avatar variant="soft" color="accent">
+  <Avatar.Image src="..." alt="User" />
+  <Avatar.Fallback>JD</Avatar.Fallback>
+</Avatar>
+
+```
+
+### 4. Avatar.Image Responsive Attributes (New in v3)
+
+**v2:** Limited to `src` and `onError`
+**v3:** `Avatar.Image` now supports `srcSet`, `sizes`, and `loading` for responsive image handling
+
+```tsx
+<Avatar>
+  <Avatar.Image
+    src="avatar-400.jpg"
+    srcSet="avatar-200.jpg 200w, avatar-400.jpg 400w"
+    sizes="(max-width: 600px) 200px, 400px"
+    loading="lazy"
+    alt="User"
+  />
+  <Avatar.Fallback>JD</Avatar.Fallback>
+</Avatar>
+
+```
+
+### 5. Avatar.Fallback `delayMs` Prop (New in v3)
+
+**v2:** Fallback shown immediately or controlled via `showFallback`
+**v3:** `Avatar.Fallback` supports a `delayMs` prop to delay rendering, preventing flash of fallback content when images load quickly
+
+```tsx
+<Avatar>
+  <Avatar.Image src="..." alt="User" />
+  <Avatar.Fallback delayMs={600}>JD</Avatar.Fallback>
+</Avatar>
+
+```
+
+### 6. Image and Fallback Handling
+
+**v2:** Used `src`, `name`, `showFallback`, and `fallback` props\
+**v3:** Must explicitly render `<Avatar.Image />` and `<Avatar.Fallback />` components
+
+### 7. Color Props
+
+| v2 Color    | v3 Color  | Notes               |
+| ----------- | --------- | ------------------- |
+| `default`   | `default` | Same                |
+| `primary`   | `accent`  | Renamed             |
+| `secondary` | `default` | Use `default` color |
+| `success`   | `success` | Same                |
+| `warning`   | `warning` | Same                |
+| `danger`    | `danger`  | Same                |
+
+### 8. AvatarGroup Removed
+
+**v2:** Had a dedicated `AvatarGroup` component\
+**v3:** No `AvatarGroup` component - create groups manually with CSS classes
+
+## Migration Examples
+
+### Sizes and Colors
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    <Avatar size="md" color="primary" src="..." name="John" />
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    <Avatar size="md" color="accent">
+      <Avatar.Image src="..." alt="John" />
+      <Avatar.Fallback>J</Avatar.Fallback>
+    </Avatar>
+    ```
+  </Tab>
+</Tabs>
+
+### Custom Fallback
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { Icon } from "@iconify/react";
+
+    <Avatar 
+      src="https://broken-url.com/image.jpg"
+      showFallback
+      fallback={<Icon icon="mdi:account" />}
+    />
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Icon } from "@iconify/react";
+
+    <Avatar>
+      <Avatar.Image 
+        src="https://broken-url.com/image.jpg" 
+        alt="User"
+      />
+      <Avatar.Fallback>
+        <Icon icon="mdi:account" />
+      </Avatar.Fallback>
+    </Avatar>
+    ```
+  </Tab>
+</Tabs>
+
+### Avatar Group
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { Avatar, AvatarGroup } from "@heroui/react";
+
+    <AvatarGroup isBordered>
+      <Avatar src="https://example.com/1.jpg" />
+      <Avatar src="https://example.com/2.jpg" />
+      <Avatar src="https://example.com/3.jpg" />
+    </AvatarGroup>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Avatar } from "@heroui/react";
+
+    <div className="flex -space-x-2">
+      <Avatar className="ring-2 ring-background">
+        <Avatar.Image src="https://example.com/1.jpg" alt="User 1" />
+        <Avatar.Fallback>U1</Avatar.Fallback>
+      </Avatar>
+      <Avatar className="ring-2 ring-background">
+        <Avatar.Image src="https://example.com/2.jpg" alt="User 2" />
+        <Avatar.Fallback>U2</Avatar.Fallback>
+      </Avatar>
+      <Avatar className="ring-2 ring-background">
+        <Avatar.Image src="https://example.com/3.jpg" alt="User 3" />
+        <Avatar.Fallback>U3</Avatar.Fallback>
+      </Avatar>
+    </div>
+    ```
+  </Tab>
+</Tabs>
+
+### Avatar Group with Max Count
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    import { Avatar, AvatarGroup } from "@heroui/react";
+
+    <AvatarGroup max={3}>
+      <Avatar src="https://example.com/1.jpg" />
+      <Avatar src="https://example.com/2.jpg" />
+      <Avatar src="https://example.com/3.jpg" />
+      <Avatar src="https://example.com/4.jpg" />
+      <Avatar src="https://example.com/5.jpg" />
+    </AvatarGroup>
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    import { Avatar } from "@heroui/react";
+
+    const users = [
+      { id: 1, src: "https://example.com/1.jpg", name: "User 1" },
+      { id: 2, src: "https://example.com/2.jpg", name: "User 2" },
+      { id: 3, src: "https://example.com/3.jpg", name: "User 3" },
+      { id: 4, src: "https://example.com/4.jpg", name: "User 4" },
+      { id: 5, src: "https://example.com/5.jpg", name: "User 5" },
+    ];
+
+    <div className="flex -space-x-2">
+      {users.slice(0, 3).map((user) => (
+        <Avatar key={user.id} className="ring-2 ring-background">
+          <Avatar.Image src={user.src} alt={user.name} />
+          <Avatar.Fallback>
+            {user.name.split(" ").map(n => n[0]).join("")}
+          </Avatar.Fallback>
+        </Avatar>
+      ))}
+      <Avatar className="ring-2 ring-background">
+        <Avatar.Fallback className="border-none">
+          +{users.length - 3}
+        </Avatar.Fallback>
+      </Avatar>
+    </div>
+    ```
+  </Tab>
+</Tabs>
+
+### Variants
+
+<Tabs items={["v2", "v3"]}>
+  <Tab value="v2">
+    ```tsx
+    {/* v2 doesn't have variants, but uses color prop */}
+    <Avatar color="primary" name="John" />
+    ```
+  </Tab>
+
+  <Tab value="v3">
+    ```tsx
+    {/* v3 has variant prop */}
+    <Avatar variant="soft" color="accent">
+      <Avatar.Fallback>J</Avatar.Fallback>
+    </Avatar>
+    ```
+  </Tab>
+</Tabs>
+
+## Styling Changes
+
+### v2: `classNames` Prop
+
+```tsx
+<Avatar 
+  classNames={{
+    base: "custom-base",
+    img: "custom-img",
+    fallback: "custom-fallback"
+  }}
+/>
+
+```
+
+### v3: Direct `className` Props
+
+```tsx
+<Avatar className="custom-base">
+  <Avatar.Image className="custom-img" src="..." alt="..." />
+  <Avatar.Fallback className="custom-fallback">
+    JD
+  </Avatar.Fallback>
+</Avatar>
+
+```
+
+## Component Anatomy
+
+The v3 Avatar follows this structure:
+
+```
+
+Avatar (Root)
+  ├── Avatar.Image (optional)
+  └── Avatar.Fallback (optional; shown when image fails or not provided)
+
+```
+
+## Helper Function for Initials
+
+Since v3 doesn't have a `name` prop, you'll need to generate initials manually:
+
+```tsx
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map(n => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+// Usage
+<Avatar>
+  <Avatar.Fallback>{getInitials("John Doe")}</Avatar.Fallback>
+</Avatar>
+
+```
+
+## Summary
+
+1. **Component Structure**: Must use compound components (`Avatar.Image`, `Avatar.Fallback`)
+2. **Name Prop Removed**: Generate initials manually
+3. **ShowFallback Removed**: Fallback always shows if image fails
+4. **Variant Prop Added**: New `variant` prop (`"default"` | `"soft"`) for visual style control
+5. **Responsive Image Support**: `Avatar.Image` now supports `srcSet`, `sizes`, and `loading` attributes
+6. **Fallback Delay**: `Avatar.Fallback` supports `delayMs` to prevent flash of fallback content
+7. **Color Mapping**: `primary` → `accent`, `secondary` → `default`
+8. **Bordered Removed**: Use Tailwind `ring-2 ring-background` classes
+9. **Radius Removed**: Use Tailwind `rounded-*` classes
+10. **Disabled Removed**: Use Tailwind `opacity-50` classes
+11. **AvatarGroup Removed**: Create groups manually with CSS
+12. **Icon Prop Removed**: Place icon content in `Avatar.Fallback`
+13. **ClassNames Removed**: Use `className` props on individual components
+
+</page>

@@ -1,15 +1,12 @@
 import {
   Button,
-  Divider,
+  Separator,
   Link,
   Popover,
-  PopoverContent,
-  PopoverTrigger,
   Accordion,
-  AccordionItem,
+  Avatar,
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Avatar } from "@heroui/avatar";
 
 import ThemeSwitcher from "@/components/theme-switcher";
 
@@ -34,21 +31,21 @@ const navItems = [
 
 export default function Sidebar() {
   return (
-    <aside className="h-full w-64 bg-content1 border-r border-divider flex flex-col">
+    <aside className="h-full w-64 bg-surface border-r border-default-200 flex flex-col">
       <div className="flex items-center gap-2 px-6 py-5">
-        <Icon className="text-primary" icon="solar:clothes-2-bold" width={32} />
-        <span className="font-bold text-2xl tracking-tight text-default-700">
+        <Icon className="text-accent" icon="solar:clothes-2-bold" width={32} />
+        <span className="font-bold text-2xl tracking-tight text-foreground">
           Admin Dashboard
         </span>
       </div>
-      <Divider />
+      <Separator />
       <nav className="flex-1 flex flex-col gap-1 px-2 py-4">
         {navItems
           .filter((item) => !item.children)
           .map((item) => (
             <Link
               key={item.label}
-              className="flex items-center gap-3 px-4 py-2 rounded-medium text-default-700 hover:bg-default-100 transition"
+              className="flex items-center gap-3 px-4 py-2 rounded-md text-foreground hover:bg-default-100 transition"
               href={item.href}
             >
               <Icon icon={item.icon} width={22} />
@@ -56,55 +53,49 @@ export default function Sidebar() {
             </Link>
           ))}
         <Accordion
-          isCompact
-          className="flex flex-col gap-1 border-none border-0"
-          selectionMode="multiple"
-          variant="bordered"
+          className="flex flex-col gap-1"
         >
           {navItems
             .filter((item) => item.children)
             .map((item) => (
-              <AccordionItem
-                key={item.label}
-                aria-label={item.label}
-                startContent={
-                  <Icon
-                    className="text-default-700"
-                    icon={item.icon}
-                    width={22}
-                  />
-                }
-                title={item.label}
-              >
-                <div className="flex flex-col gap-2">
-                  {item.children?.map((child) => (
-                    <Link
-                      key={child.label}
-                      className="flex items-center gap-3 px-2 py-1 rounded-medium text-default-700 hover:bg-default-100 transition"
-                      href={child.href}
-                    >
-                      {child.label}
-                    </Link>
-                  ))}
-                </div>
-              </AccordionItem>
+              <Accordion.Item key={item.label} id={item.label}>
+                <Accordion.Heading>
+                  <Accordion.Trigger>
+                    <div className="flex items-center gap-2">
+                      <Icon className="text-foreground" icon={item.icon} width={22} />
+                      <span>{item.label}</span>
+                    </div>
+                  </Accordion.Trigger>
+                </Accordion.Heading>
+                <Accordion.Panel>
+                  <div className="flex flex-col gap-2 pl-8 pb-2">
+                    {item.children?.map((child) => (
+                      <Link
+                        key={child.label}
+                        className="flex items-center gap-3 px-2 py-1 rounded-md text-foreground hover:text-primary transition"
+                        href={child.href}
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
+                </Accordion.Panel>
+              </Accordion.Item>
             ))}
         </Accordion>
       </nav>
       <div className="px-4 py-4">
         <ThemeSwitcher />
-        <Popover placement="top-start">
-          <PopoverTrigger>
-            <div className="flex items-center gap-3 cursor-pointer rounded-medium px-2 py-2 hover:bg-default-100 transition">
+        <Popover>
+          <Popover.Trigger>
+            <div className="flex items-center gap-3 cursor-pointer rounded-md px-2 py-2 hover:bg-default-100 transition">
               <Avatar
                 className="w-10 h-10 text-base font-semibold"
-                color="secondary"
-                name="Admin"
               >
                 AD
               </Avatar>
               <div className="flex flex-col flex-1 min-w-0">
-                <span className="font-semibold text-default-900 leading-tight">
+                <span className="font-semibold text-foreground leading-tight">
                   Admin
                 </span>
                 <span className="text-default-500 text-sm truncate">
@@ -112,20 +103,19 @@ export default function Sidebar() {
                 </span>
               </div>
             </div>
-          </PopoverTrigger>
-          <PopoverContent className="px-1 w-56">
+          </Popover.Trigger>
+          <Popover.Content className="px-1 w-56">
             <Button
-              as={Link}
               className="w-full"
-              color="danger"
-              href="/"
-              startContent={<Icon icon="solar:logout-2-bold" width={20} />}
+              variant="danger"
             >
+              <Icon icon="solar:logout-2-bold" width={20} />
               Logout
             </Button>
-          </PopoverContent>
+          </Popover.Content>
         </Popover>
       </div>
     </aside>
   );
 }
+

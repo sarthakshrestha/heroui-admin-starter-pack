@@ -1,5 +1,4 @@
-import { Button } from "@heroui/button";
-import { Tabs, Tab, Select, SelectItem } from "@heroui/react";
+import { Button, Tabs, Select, ListBox } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 
@@ -57,20 +56,17 @@ function DashboardMain() {
         </div>
         <div className="flex gap-2 w-full md:w-auto">
           <Button
-            className="w-1/2 md:w-auto"
-            color="default"
-            startContent={
-              <Icon icon="line-md:cloud-alt-upload-filled-loop" width={18} />
-            }
-            variant="bordered"
+            className="w-1/2 md:w-auto border border-default-200"
+            variant="outline"
           >
+            <Icon icon="line-md:cloud-alt-upload-filled-loop" width={18} />
             Import
           </Button>
           <Button
-            className="w-1/2 md:w-auto"
-            color="primary"
-            startContent={<Icon icon="ic:baseline-plus" width={18} />}
+            className="w-1/2 md:w-auto bg-accent text-white"
+            variant="primary"
           >
+            <Icon icon="ic:baseline-plus" width={18} />
             Add
           </Button>
         </div>
@@ -81,31 +77,30 @@ function DashboardMain() {
         <div className="hidden md:block">
           <Tabs
             aria-label="Order Tabs"
-            classNames={{
-              tab: "px-4 py-2 rounded-xl text-base font-medium",
-              tabContent: "flex items-center gap-2",
-              tabList: "gap-2",
-            }}
             selectedKey={selectedTab}
-            variant="light"
             onSelectionChange={(key) => setSelectedTab(key as string)}
           >
+            <Tabs.ListContainer>
+              <Tabs.List className="gap-4">
+                {tabsData.map((tab) => (
+                  <Tabs.Tab key={tab.key} id={tab.key}>
+                    <div className="flex items-center gap-2">
+                      <Icon
+                        className="text-default-700"
+                        icon={tab.icon}
+                        width={20}
+                      />
+                      <span className="text-default-700">{tab.label}</span>
+                    </div>
+                    <Tabs.Indicator />
+                  </Tabs.Tab>
+                ))}
+              </Tabs.List>
+            </Tabs.ListContainer>
             {tabsData.map((tab) => (
-              <Tab
-                key={tab.key}
-                title={
-                  <span className="flex items-center gap-2">
-                    <Icon
-                      className="text-default-700"
-                      icon={tab.icon}
-                      width={20}
-                    />
-                    <span className="text-default-700">{tab.label}</span>
-                  </span>
-                }
-              >
+              <Tabs.Panel key={tab.key} id={tab.key}>
                 {tab.content}
-              </Tab>
+              </Tabs.Panel>
             ))}
           </Tabs>
         </div>
@@ -113,15 +108,26 @@ function DashboardMain() {
         <div className="md:hidden">
           <Select
             className="max-w-xs mb-4"
-            items={tabsData.map((tab) => ({ key: tab.key, label: tab.label }))}
-            label="Order Tabs"
             placeholder="Select a tab"
-            selectedKeys={[selectedTab]}
-            onSelectionChange={(keys) =>
-              setSelectedTab(Array.from(keys)[0] as string)
-            }
+            onChange={(value) => {
+              if (value) setSelectedTab(String(value));
+            }}
           >
-            {(item) => <SelectItem>{item.label}</SelectItem>}
+            <Select.Trigger>
+              <Select.Value>
+                {tabsData.find((t) => t.key === selectedTab)?.label || "Select a tab"}
+              </Select.Value>
+              <Select.Indicator />
+            </Select.Trigger>
+            <Select.Popover>
+              <ListBox items={tabsData}>
+                {(item) => (
+                  <ListBox.Item id={item.key} textValue={item.label}>
+                    {item.label}
+                  </ListBox.Item>
+                )}
+              </ListBox>
+            </Select.Popover>
           </Select>
           {tabsData.find((tab) => tab.key === selectedTab)?.content}
         </div>

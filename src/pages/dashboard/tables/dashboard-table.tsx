@@ -1,22 +1,16 @@
 import React from "react";
 import {
   Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
   Chip,
   Button,
-  Input,
-  DropdownTrigger,
+  TextField,
+  InputGroup,
   Dropdown,
-  DropdownMenu,
-  DropdownItem,
   Pagination,
-  Progress,
+  ProgressBar,
   Selection,
   SortDescriptor,
+  Checkbox,
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
@@ -70,11 +64,6 @@ const orders = [
     expectation: "Delayed",
   },
 ];
-
-const fillColorMap: Record<string, "success" | "warning"> = {
-  Full: "success",
-  Partial: "warning",
-};
 
 const expectationColorMap: Record<string, "success" | "danger"> = {
   "On Time": "success",
@@ -177,8 +166,8 @@ export default function OrderTable() {
 
   const sortedItems = React.useMemo(() => {
     return [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column as keyof typeof a];
-      const second = b[sortDescriptor.column as keyof typeof b];
+      const first = a[sortDescriptor.column as keyof typeof a] as any;
+      const second = b[sortDescriptor.column as keyof typeof b] as any;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
@@ -196,22 +185,23 @@ export default function OrderTable() {
           return cellValue;
         case "recommendationScore":
           return (
-            <Chip color="primary" variant="flat">
+            <Chip color="accent" variant="soft">
               {cellValue}
             </Chip>
           );
         case "priorityScore":
           return (
-            <Chip color="secondary" variant="flat">
+            <Chip color="accent" variant="soft">
               {cellValue}
             </Chip>
           );
         case "fill":
+          // ProgressBar in HeroUI v3 also changed props?
+          // Document: v2 Progress -> v3 ProgressBar
           return (
-            <Progress
+            <ProgressBar
               aria-label="Fill"
               className="w-20"
-              color={fillColorMap[order.fill]}
               value={order.fill === "Full" ? 100 : 50}
             />
           );
@@ -221,16 +211,16 @@ export default function OrderTable() {
               color={
                 expectationColorMap[
                   order.expectation as keyof typeof expectationColorMap
-                ] || "default"
+                ] === "success" ? "success" : "danger"
               }
-              variant="flat"
+              variant="soft"
             >
               {cellValue}
             </Chip>
           );
         case "actions":
           return (
-            <Button isIconOnly size="sm" variant="light">
+            <Button isIconOnly size="sm" variant="ghost">
               <Icon icon="ic:round-chevron-right" width={18} />
             </Button>
           );
@@ -253,236 +243,250 @@ export default function OrderTable() {
     }
   }, [page]);
 
-  const onRowsPerPageChange = React.useCallback((e: any) => {
+  const onRowsPerPageChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(Number(e.target.value));
     setPage(1);
   }, []);
 
-  const onSearchChange = React.useCallback((value: string) => {
+  const onSearchChange = (value: string) => {
     if (value) {
       setFilterValue(value);
       setPage(1);
     } else {
       setFilterValue("");
     }
-  }, []);
+  };
 
   const onClear = React.useCallback(() => {
     setFilterValue("");
     setPage(1);
   }, []);
 
-  const topContent = React.useMemo(() => {
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
-          <Input
-            isClearable
-            className="w-full sm:max-w-[44%]"
-            placeholder="Search by customer name or stock code..."
-            startContent={<Icon icon="solar:magnifer-bold" width={18} />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
-          <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={
-                    <Icon
-                      className="text-small"
-                      icon="mingcute:down-line"
-                      width={18}
-                    />
-                  }
-                  variant="flat"
-                >
-                  Fill
+  const topContent = (
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between gap-3 items-end">
+        <TextField aria-label="Search" className="w-full sm:max-w-[44%]">
+          <InputGroup>
+            <InputGroup.Prefix className="pl-3">
+              <Icon className="text-default-400" icon="solar:magnifer-bold" width={18} />
+            </InputGroup.Prefix>
+            <InputGroup.Input
+              placeholder="Search by customer name or stock code..."
+              value={filterValue}
+              onChange={(e) => onSearchChange(e.target.value)}
+            />
+            {filterValue && (
+              <InputGroup.Suffix>
+                <Button isIconOnly size="sm" variant="ghost" onClick={onClear}>
+                  <Icon icon="ic:round-close" width={18} />
                 </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Fill Filter"
-                closeOnSelect={false}
-                selectedKeys={fillFilter}
-                selectionMode="multiple"
-                onSelectionChange={setFillFilter}
+              </InputGroup.Suffix>
+            )}
+          </InputGroup>
+        </TextField>
+        <div className="flex gap-3">
+          <Dropdown>
+            <Dropdown.Trigger>
+              <Button
+                className="hidden sm:flex"
+                variant="secondary"
               >
-                {fillOptions.map((fill) => (
-                  <DropdownItem key={fill.uid} className="capitalize">
-                    {capitalize(fill.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={
-                    <Icon
-                      className="text-small"
-                      icon="mingcute:down-line"
-                      width={18}
-                    />
-                  }
-                  variant="flat"
-                >
-                  Expectation
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Expectation Filter"
-                closeOnSelect={false}
-                selectedKeys={expectationFilter}
-                selectionMode="multiple"
-                onSelectionChange={setExpectationFilter}
-              >
-                {expectationOptions.map((expectation) => (
-                  <DropdownItem key={expectation.uid} className="capitalize">
-                    {capitalize(expectation.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={
-                    <Icon
-                      className="text-small"
-                      icon="mingcute:down-line"
-                      width={18}
-                    />
-                  }
-                  variant="flat"
-                >
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {capitalize(column.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Total {orders.length} orders
-          </span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-solid outline-transparent text-default-400 text-small"
-              onChange={onRowsPerPageChange}
+                Fill
+                <Icon
+                  className="text-small"
+                  icon="mingcute:down-line"
+                  width={18}
+                />
+              </Button>
+            </Dropdown.Trigger>
+            <Dropdown.Menu
+              disallowEmptySelection
+              aria-label="Fill Filter"
+              selectedKeys={fillFilter}
+              selectionMode="multiple"
+              onSelectionChange={setFillFilter}
             >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
+              {fillOptions.map((fill) => (
+                <Dropdown.Item key={fill.uid} className="capitalize">
+                  {capitalize(fill.name)}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          <Dropdown>
+            <Dropdown.Trigger>
+              <Button
+                className="hidden sm:flex"
+                variant="secondary"
+              >
+                Expectation
+                <Icon
+                  className="text-small"
+                  icon="mingcute:down-line"
+                  width={18}
+                />
+              </Button>
+            </Dropdown.Trigger>
+            <Dropdown.Menu
+              disallowEmptySelection
+              aria-label="Expectation Filter"
+              selectedKeys={expectationFilter}
+              selectionMode="multiple"
+              onSelectionChange={setExpectationFilter}
+            >
+              {expectationOptions.map((expectation) => (
+                <Dropdown.Item key={expectation.uid} className="capitalize">
+                  {capitalize(expectation.name)}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          <Dropdown>
+            <Dropdown.Trigger>
+              <Button
+                className="hidden sm:flex"
+                variant="secondary"
+              >
+                Columns
+                <Icon
+                  className="text-small"
+                  icon="mingcute:down-line"
+                  width={18}
+                />
+              </Button>
+            </Dropdown.Trigger>
+            <Dropdown.Menu
+              disallowEmptySelection
+              aria-label="Table Columns"
+              selectedKeys={visibleColumns}
+              selectionMode="multiple"
+              onSelectionChange={setVisibleColumns}
+            >
+              {columns.map((column) => (
+                <Dropdown.Item key={column.uid} className="capitalize">
+                  {capitalize(column.name)}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
       </div>
-    );
-  }, [
-    filterValue,
-    fillFilter,
-    expectationFilter,
-    visibleColumns,
-    onRowsPerPageChange,
-    orders.length,
-    onSearchChange,
-    hasSearchFilter,
-  ]);
-
-  const bottomContent = React.useMemo(() => {
-    return (
-      <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${(selectedKeys as Set<string>).size} of ${filteredItems.length} selected`}
+      <div className="flex justify-between items-center">
+        <span className="text-default-400 text-small">
+          Total {orders.length} orders
         </span>
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          total={pages}
-          onChange={setPage}
-        />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onPreviousPage}
+        <label className="flex items-center text-default-400 text-small">
+          Rows per page:
+          <select
+            className="bg-transparent outline-none text-default-400 text-small"
+            value={rowsPerPage}
+            onChange={onRowsPerPageChange}
           >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onNextPage}
-          >
-            Next
-          </Button>
-        </div>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+          </select>
+        </label>
       </div>
-    );
-  }, [selectedKeys, filteredItems.length, page, pages, hasSearchFilter]);
+    </div>
+  );
+
+  const bottomContent = (
+    <div className="py-2 px-2 flex justify-between items-center">
+      <span className="w-[30%] text-small text-default-400">
+        {selectedKeys === "all"
+          ? "All items selected"
+          : `${(selectedKeys as Set<string>).size} of ${filteredItems.length} selected`}
+      </span>
+      <Pagination
+        className="gap-2"
+      >
+        <Pagination.Content>
+          <Pagination.Item>
+            <Pagination.Previous onPress={onPreviousPage}>
+              <Icon icon="ic:round-chevron-left" width={18} />
+            </Pagination.Previous>
+          </Pagination.Item>
+          {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
+            <Pagination.Item key={p}>
+              <Pagination.Link isActive={p === page} onPress={() => setPage(p)}>
+                {p}
+              </Pagination.Link>
+            </Pagination.Item>
+          ))}
+          <Pagination.Item>
+            <Pagination.Next onPress={onNextPage}>
+              <Icon icon="ic:round-chevron-right" width={18} />
+            </Pagination.Next>
+          </Pagination.Item>
+        </Pagination.Content>
+      </Pagination>
+      <div className="hidden sm:flex w-[30%] justify-end gap-2">
+        <Button
+          isDisabled={page === 1}
+          size="sm"
+          variant="secondary"
+          onPress={onPreviousPage}
+        >
+          Previous
+        </Button>
+        <Button
+          isDisabled={page === pages}
+          size="sm"
+          variant="secondary"
+          onPress={onNextPage}
+        >
+          Next
+        </Button>
+      </div>
+    </div>
+  );
 
   return (
-    <Table
-      isHeaderSticky
-      aria-label="Order Table"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[420px]",
-      }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No orders found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
+    <Table className="max-h-[420px]">
+      {topContent}
+      <Table.ScrollContainer>
+        <Table.Content
+          aria-label="Order Table"
+          selectedKeys={selectedKeys}
+          selectionMode="multiple"
+          sortDescriptor={sortDescriptor}
+          onSelectionChange={setSelectedKeys}
+          onSortChange={setSortDescriptor}
+        >
+          <Table.Header>
+            <Table.Column>
+              <Checkbox slot="selection" />
+            </Table.Column>
+            {headerColumns.map((column) => (
+              <Table.Column
+                key={column.uid}
+                allowsSorting={column.sortable}
+                className={column.uid === "actions" ? "text-center" : "text-left"}
+              >
+                {column.name}
+              </Table.Column>
+            ))}
+          </Table.Header>
+          <Table.Body renderEmptyState={() => <div className="p-4 text-center">No orders found</div>}>
+            {sortedItems.map((item) => (
+              <Table.Row key={item.id}>
+                <Table.Cell>
+                  <Checkbox slot="selection" />
+                </Table.Cell>
+                {headerColumns.map((column) => (
+                  <Table.Cell key={column.uid} className={column.uid === "actions" ? "text-center" : "text-left"}>
+                    {renderCell(item, column.uid)}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+      <Table.Footer>
+        {bottomContent}
+      </Table.Footer>
     </Table>
   );
 }

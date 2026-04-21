@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Breadcrumbs, BreadcrumbItem, Tooltip } from "@heroui/react";
+import { Button, Breadcrumbs, BreadcrumbsItem, Tooltip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 import Sidebar from "./sidebar";
@@ -69,61 +69,59 @@ export default function SidebarLayout({
             {breadcrumbs && (
               <Breadcrumbs className="mb-1">
                 {breadcrumbs.map((item) => (
-                  <BreadcrumbItem key={item.label} href={item.href}>
+                  <BreadcrumbsItem key={item.label} href={item.href}>
                     {item.label}
-                  </BreadcrumbItem>
+                  </BreadcrumbsItem>
                 ))}
               </Breadcrumbs>
             )}
             <div className="flex items-center gap-2">
-              <Tooltip
-                className="text-default-700"
-                content={
-                  typeof window !== "undefined" && window.innerWidth < 768
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Button
+                    isIconOnly
+                    aria-label={
+                      typeof window !== "undefined" && window.innerWidth < 768
+                        ? open
+                          ? "Close sidebar"
+                          : "Open sidebar"
+                        : collapsed
+                          ? "Expand sidebar"
+                          : "Collapse sidebar"
+                    }
+                    variant="ghost"
+                    onClick={() => {
+                      if (
+                        typeof window !== "undefined" &&
+                        window.innerWidth < 768
+                      ) {
+                        setOpen((v) => !v);
+                      } else {
+                        setCollapsed((v) => !v);
+                      }
+                    }}
+                  >
+                    <Icon
+                      icon={
+                        typeof window !== "undefined" && window.innerWidth < 768
+                          ? "solar:sidebar-minimalistic-linear"
+                          : collapsed
+                            ? "solar:sidebar-minimalistic-linear"
+                            : "solar:sidebar-minimalistic-linear"
+                      }
+                      width={22}
+                    />
+                  </Button>
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  {typeof window !== "undefined" && window.innerWidth < 768
                     ? open
                       ? "Close sidebar"
                       : "Open sidebar"
                     : collapsed
                       ? "Expand sidebar"
-                      : "Collapse sidebar"
-                }
-              >
-                <Button
-                  isIconOnly
-                  aria-label={
-                    typeof window !== "undefined" && window.innerWidth < 768
-                      ? open
-                        ? "Close sidebar"
-                        : "Open sidebar"
-                      : collapsed
-                        ? "Expand sidebar"
-                        : "Collapse sidebar"
-                  }
-                  variant="light"
-                  onClick={() => {
-                    if (
-                      typeof window !== "undefined" &&
-                      window.innerWidth < 768
-                    ) {
-                      setOpen((v) => !v);
-                    } else {
-                      setCollapsed((v) => !v);
-                    }
-                  }}
-                >
-                  <Icon
-                    icon={
-                      typeof window !== "undefined" && window.innerWidth < 768
-                        ? open
-                          ? "solar:sidebar-minimalistic-linear"
-                          : "solar:sidebar-minimalistic-linear"
-                        : collapsed
-                          ? "solar:sidebar-minimalistic-linear"
-                          : "solar:sidebar-minimalistic-linear"
-                    }
-                    width={22}
-                  />
-                </Button>
+                      : "Collapse sidebar"}
+                </Tooltip.Content>
               </Tooltip>
               {title && <h1 className=" text-default-900 truncate">{title}</h1>}
             </div>
