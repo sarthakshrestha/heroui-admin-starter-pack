@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export function useTheme() {
-  const [theme, setThemeState] = useState<"light" | "dark" | "system">("light");
+  const [theme, setThemeState] = useState<"light" | "dark" | "system">("dark");
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains("dark");

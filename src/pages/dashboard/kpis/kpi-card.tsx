@@ -89,23 +89,23 @@ const KpiCards = () => {
   return (
     <div className="grid grid-cols-1 gap-4 my-4 md:grid-cols-2 lg:grid-cols-4">
       {kpiData.map((kpi, index) => (
-        <Card key={index} className="border-default-200">
+        <Card key={index} className="bg-white/2 border-white/8 shadow-none backdrop-blur-sm rounded-xl overflow-hidden group hover:bg-white/4 transition-colors">
           <Card.Content className="p-0">
             <div className="p-4 pt-2 pb-2 flex flex-col gap-1">
               {/* Header */}
               <div className="flex flex-col gap-2">
-                <p className="font-medium text-gray-500 text-sm">{kpi.title}</p>
-                <h2 className="font-bold text-4xl">
+                <p className="font-signature text-tertiary-text text-[13px] tracking-tight">{kpi.title}</p>
+                <h2 className="font-signature text-3xl tracking-tight text-primary-text">
                   {kpi.value.toLocaleString()}
                 </h2>
               </div>
               {/* Change Indicator */}
               <div className="flex items-center gap-1 mt-4">
                 <span
-                  className={`flex items-center gap-1 font-medium text-sm ${kpi.isPositive ? "text-green-600" : "text-red-600"
+                  className={`flex items-center gap-1 font-signature text-[12px] ${kpi.isPositive ? "text-emerald-500" : "text-red-500"
                     }`}
                 >
-                  {kpi.change}% {kpi.isPositive ? "increase" : "decrease"}
+                  {kpi.isPositive ? "+" : "-"}{kpi.change}%
                   {kpi.isPositive ? (
                     <ArrowUpRight width={16} />
                   ) : (
@@ -122,7 +122,7 @@ const KpiCards = () => {
                     dataKey="value"
                     dot={false}
                     stroke={kpi.isPositive ? "#10b981" : "#ef4444"}
-                    strokeWidth={2}
+                    strokeWidth={1.5}
                     type="monotone"
                   />
                 </LineChart>

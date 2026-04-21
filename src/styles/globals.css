@@ -1,2 +1,88 @@
 @import "tailwindcss";
 @import "@heroui/styles";
+
+@theme {
+  --font-sans: "Inter", "Inter Variable", -apple-system, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Berkeley Mono", ui-monospace, SF Mono, Menlo, monospace;
+
+  /* Backgrounds */
+  --color-background: #ffffff;
+  --color-surface-card: #ffffff;
+  --color-surface-featured: #ffffff;
+  --color-surface-hover: #fafafa;
+
+  /* Text Colors */
+  --color-foreground: #0d0d0d;
+  --color-primary-text: #0d0d0d;
+  --color-secondary-text: #333333;
+  --color-tertiary-text: #666666;
+  --color-quaternary-text: #888888;
+
+  /* Brand Colors */
+  --color-brand: #18E299;
+  --color-brand-light: #d4fae8;
+  --color-brand-deep: #0fa76e;
+
+  /* Weights */
+  --font-weight-read: 400;
+  --font-weight-interact: 500;
+  --font-weight-announce: 600;
+
+  /* Radius */
+  --radius-pill: 9999px;
+  --radius-standard: 16px;
+  --radius-featured: 24px;
+  --radius-small: 8px;
+
+  /* Shadows */
+  --shadow-card: rgba(0, 0, 0, 0.03) 0px 2px 4px;
+  --shadow-button: rgba(0, 0, 0, 0.06) 0px 1px 2px;
+}
+
+@custom-variant dark (&:where(.dark, [data-theme="dark"]));
+
+/* Dark mode overrides */
+@theme dark {
+  --color-background: #0d0d0d;
+  --color-surface-card: #141414;
+  --color-foreground: #ededed;
+  --color-primary-text: #ededed;
+  --color-secondary-text: #a0a0a0;
+  --color-tertiary-text: #888888;
+  --color-quaternary-text: #666666;
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-surface-hover: rgba(255, 255, 255, 0.05);
+}
+
+@layer base {
+    :root {
+        --font-feature-settings: "cv01", "ss03";
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings: var(--font-feature-settings);
+    }
+
+    /* Headlines spacing */
+    h1, .display-xl { @apply tracking-[-1.28px] font-announce; }
+    h2, .display-large { @apply tracking-[-0.8px] font-announce; }
+    h3, .display { @apply tracking-[-0.24px] font-interact; }
+}
+
+@layer components {
+  .mintlify-border {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  .dark .mintlify-border {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .mintlify-border-medium {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .dark .mintlify-border-medium {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+}
