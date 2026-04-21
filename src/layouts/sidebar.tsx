@@ -25,7 +25,7 @@ const navItems = [
 
 export default function Sidebar() {
   return (
-    <div className="flex flex-col h-screen w-full bg-background overflow-hidden border-r border-divider/5">
+    <div className="flex flex-col h-screen w-full bg-background overflow-hidden">
       {/* Sidebar Header - Profile Section */}
       <div className="flex items-center gap-3 px-6 py-10">
         <div className="h-9 w-9 shrink-0 flex items-center justify-center rounded-lg bg-foreground text-background">
@@ -45,19 +45,19 @@ export default function Sidebar() {
             <Link
               key={item.id}
               href={item.href}
-              className="flex items-center justify-between px-4 py-2 rounded-lg text-secondary-text hover:text-brand hover:bg-brand-light/20 transition-all group no-underline"
+              className="flex items-center px-4 py-2 rounded-lg text-secondary-text hover:text-brand hover:bg-foreground/5 transition-all group no-underline"
             >
               <div className="flex items-center gap-3">
                 <span className="text-tertiary-text group-hover:text-brand transition-colors flex items-center justify-center w-5 h-5">
                   {item.icon}
                 </span>
                 <span className="font-interact tracking-tight">{item.label}</span>
+                {item.isNew && (
+                  <Chip size="sm" variant="soft" className="ml-1 h-5 px-2 font-interact text-[10px] bg-brand-light text-brand-deep rounded-full border-none">
+                    New
+                  </Chip>
+                )}
               </div>
-              {item.isNew && (
-                <Chip size="sm" variant="soft" className="h-5 px-2 font-interact text-[10px] bg-brand-light text-brand-deep rounded-full border-none">
-                  New
-                </Chip>
-              )}
             </Link>
           ))}
         </div>
@@ -77,11 +77,6 @@ export default function Sidebar() {
           <ArrowRightFromSquare width={16} className="text-quaternary-text" />
           <span className="font-interact tracking-tight">Log out</span>
         </button>
-        
-        <div className="flex items-center justify-between px-4 py-3 mt-2">
-          <span className="text-[10px] font-announce uppercase tracking-widest text-quaternary-text">Appearance</span>
-          <ThemeSwitcher />
-        </div>
       </div>
     </div>
   );

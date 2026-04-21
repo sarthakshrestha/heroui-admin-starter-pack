@@ -1,27 +1,32 @@
-import React from "react";
+import { useState, useRef, ReactNode, Fragment } from "react";
 import {
   Button,
   Tooltip,
   Drawer,
-  Chip,
-  Link as HeroUILink
+  Chip
 } from "@heroui/react";
 import { LayoutSideContent, PersonPlus } from "@gravity-ui/icons";
 import { Link } from "react-router-dom";
 
 import Sidebar from "./sidebar";
+import { useClickOutside } from "../hooks/use-click-outside";
 
 export default function SidebarLayout({
   children,
   title,
   breadcrumbs,
 }: {
-  children: React.ReactNode;
-  title?: React.ReactNode;
+  children: ReactNode;
+  title?: ReactNode;
   breadcrumbs?: { label: string; href?: string }[];
 }) {
-  const [open, setOpen] = React.useState(false);
-  const [collapsed, setCollapsed] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside(drawerRef, () => {
+    if (open) setOpen(false);
+  });
 
   return (
     <div className="flex min-h-screen bg-background text-foreground selection:bg-primary/10">
@@ -45,8 +50,10 @@ export default function SidebarLayout({
           placement="left"
           className="p-0 bg-transparent shadow-none"
         >
-          <Drawer.Dialog className="h-full bg-content1 rounded-r-3xl overflow-hidden max-w-[280px]">
-            <Sidebar />
+          <Drawer.Dialog className="h-full p-0 bg-content1 rounded-r-3xl overflow-hidden max-w-[280px]">
+            <div ref={drawerRef} className="h-full w-full">
+              <Sidebar />
+            </div>
           </Drawer.Dialog>
         </Drawer.Content>
       </Drawer>
@@ -60,7 +67,7 @@ export default function SidebarLayout({
               variant="secondary"
               size="sm"
               aria-label="Open sidebar"
-              className="flex md:hidden text-tertiary-text rounded-md bg-transparent hover:bg-surface-hover transition-all border-none shadow-none"
+              className="flex md:hidden text-tertiary-text rounded-md bg-transparent hover:bg-foreground/5 transition-all border-none shadow-none"
               onPress={() => setOpen(true)}
             >
               <LayoutSideContent width={18} />
@@ -73,7 +80,7 @@ export default function SidebarLayout({
                   variant="secondary"
                   size="sm"
                   aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-                  className="hidden md:flex text-tertiary-text rounded-md bg-transparent hover:bg-surface-hover transition-all border-none shadow-none"
+                  className="hidden md:flex text-tertiary-text rounded-md bg-transparent hover:bg-foreground/5 transition-all border-none shadow-none"
                   onPress={() => setCollapsed((v) => !v)}
                 >
                   <LayoutSideContent width={18} />
@@ -86,10 +93,31 @@ export default function SidebarLayout({
 
             <div className="flex items-center gap-2 min-w-0">
               <nav className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                <Link to="/dashboard" className="text-[13px] font-interact text-tertiary-text hover:text-primary-text transition-colors whitespace-nowrap">Dashboard</Link>
-                <span className="text-quaternary-text text-[10px]">/</span>
-                <span className="text-[13px] font-interact text-primary-text whitespace-nowrap">Overview</span>
+                {breadcrumbs ? (
+                  breadcrumbs.map((item, i) => (
+                    <Fragment key={i}>
+                      {i > 0 && <span className="text-quaternary-text text-[10px]">/</span>}
+                      {item.href ? (
+                        <Link to={item.href} className="text-[13px] font-interact text-tertiary-text hover:text-primary-text transition-colors whitespace-nowrap">{item.label}</Link>
+                      ) : (
+                        <span className="text-[13px] font-interact text-primary-text whitespace-nowrap">{item.label}</span>
+                      )}
+                    </Fragment>
+                  ))
+                ) : (
+                  <>
+                    <Link to="/dashboard" className="text-[13px] font-interact text-tertiary-text hover:text-primary-text transition-colors whitespace-nowrap">Dashboard</Link>
+                    <span className="text-quaternary-text text-[10px]">/</span>
+                    <span className="text-[13px] font-interact text-primary-text whitespace-nowrap">Overview</span>
+                  </>
+                )}
               </nav>
+              {title && (
+                <div className="hidden sm:flex items-center gap-1.5 ml-2">
+                  <span className="text-quaternary-text text-[10px]">•</span>
+                  <span className="text-xs font-interact text-secondary-text">{title}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -101,7 +129,7 @@ export default function SidebarLayout({
             <div className="flex items-center -space-x-2">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="w-7 h-7 rounded-full border-2 border-background bg-surface-card overflow-hidden">
-                  <img src={`https://i.pravatar.cc/100?u=${i+10}`} alt="User" className="w-full h-full object-cover" />
+                  <img src={`https://i.pravatar.cc/100?u=${i + 10}`} alt="User" className="w-full h-full object-cover" />
                 </div>
               ))}
             </div>

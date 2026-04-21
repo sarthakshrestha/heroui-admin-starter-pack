@@ -115,7 +115,7 @@ export default function OrderTable() {
   }, []);
 
   return (
-    <Table className="bg-transparent">
+    <Table className="bg-none">
       <Table.Content
         aria-label="Example static collection table"
         selectionMode="multiple"
