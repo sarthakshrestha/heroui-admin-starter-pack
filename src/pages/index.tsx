@@ -18,13 +18,13 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="rounded-large bg-content1 flex w-full max-w-sm flex-col gap-4 px-8 pt-6 pb-9">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-default-800 text-2xl text-left font-medium tracking-tight">
+    <div className="min-h-screen flex items-center justify-center bg-marketing-black">
+      <div className="rounded-xl bg-panel-dark border border-white/5 flex w-full max-w-sm flex-col gap-6 px-8 pt-10 pb-12 shadow-level-5 backdrop-blur-xl">
+        <div className="flex flex-col gap-2">
+          <h2 className="text-primary-text text-2xl text-left font-signature tracking-tight">
             Log in to your account
           </h2>
-          <p className="text-small text-default-500 text-left">
+          <p className="text-sm text-tertiary-text text-left font-regular">
             Please enter your details
           </p>
         </div>
@@ -35,46 +35,56 @@ export default function Login() {
         >
           <Input
             isRequired
-            className="text-default-700"
+            className="text-primary-text"
             label="Email Address"
             name="email"
             placeholder="Enter your email"
             type="email"
-            variant="bordered"
+            variant="primary"
+            classNames={{
+              inputWrapper: "bg-white/5 border border-white/5 data-[hover=true]:bg-white/8 transition-all h-11 shadow-none",
+              label: "text-tertiary-text font-signature",
+              input: "placeholder:text-quaternary-text"
+            }}
           />
           <Input
             isRequired
-            className="text-default-700"
-            endContent={
-              <button type="button" onClick={toggleVisibility}>
-                {isVisible ? (
-                  <Icon
-                    className="text-default-700 pointer-events-none text-2xl"
-                    icon="solar:eye-closed-linear"
-                  />
-                ) : (
-                  <Icon
-                    className="text-default-700 pointer-events-none text-2xl"
-                    icon="solar:eye-bold"
-                  />
-                )}
-              </button>
-            }
+            className="text-primary-text"
             label="Password"
             name="password"
             placeholder="Enter your password"
             type={isVisible ? "text" : "password"}
-            variant="bordered"
+            variant="primary"
+            classNames={{
+              inputWrapper: "bg-white/5 border border-white/5 data-[hover=true]:bg-white/8 transition-all h-11 shadow-none",
+              label: "text-tertiary-text font-signature",
+              input: "placeholder:text-quaternary-text"
+            }}
+            endContent={
+              <button type="button" onClick={toggleVisibility} className="text-quaternary-text hover:text-tertiary-text transition-colors">
+                {isVisible ? (
+                  <Icon
+                    className="pointer-events-none text-xl"
+                    icon="lucide:eye-off"
+                  />
+                ) : (
+                  <Icon
+                    className="pointer-events-none text-xl"
+                    icon="lucide:eye"
+                  />
+                )}
+              </button>
+            }
           />
-          <div className="flex w-full items-center justify-between px-1 py-2">
-            <Checkbox name="remember" size="sm">
+          <div className="flex w-full items-center justify-between px-1 py-1">
+            <Checkbox name="remember" classNames={{ label: "text-tertiary-text font-regular text-sm" }}>
               Remember me
             </Checkbox>
-            <Link className="text-default-500" href="#" size="sm">
+            <Link className="text-tertiary-text hover:text-primary-text transition-colors text-sm" href="#">
               Forgot password?
             </Link>
           </div>
-          <Button className="w-full" color="primary" type="submit">
+          <Button className="w-full bg-brand-indigo hover:bg-accent-hover text-white font-signature h-11 rounded-lg mt-2 shadow-none transition-all active:scale-95" type="submit">
             Sign In
           </Button>
         </Form>

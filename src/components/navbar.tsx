@@ -15,16 +15,16 @@ import {
 export const Navbar = () => {
   const searchInput = (
     <TextField aria-label="Search" className="w-full">
-      <InputGroup className="bg-default-100 rounded-lg">
+      <InputGroup className="bg-white/4 rounded-lg border border-white/5 shadow-none group focus-within:border-white/10 transition-all">
         <InputGroup.Prefix className="pl-3">
-          <Magnifier className="text-base text-default-400 pointer-events-none" />
+          <Magnifier className="text-quaternary-text" width={16} />
         </InputGroup.Prefix>
         <InputGroup.Input 
-          className="text-sm" 
+          className="text-xs font-regular text-primary-text placeholder:text-quaternary-text" 
           placeholder="Search..." 
         />
         <InputGroup.Suffix className="pr-3">
-          <Kbd className="hidden lg:inline-block">
+          <Kbd className="hidden lg:inline-block bg-white/5 border-white/5 font-signature text-[10px] text-tertiary-text">
             K
           </Kbd>
         </InputGroup.Suffix>
@@ -33,15 +33,15 @@ export const Navbar = () => {
   );
 
   return (
-    <nav className="flex items-center justify-between px-6 py-4 w-full sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-divider">
+    <nav className="flex items-center justify-between px-6 py-3 w-full sticky top-0 z-50 bg-panel-dark/80 backdrop-blur-md border-b border-white/5">
       <div className="flex items-center justify-start gap-4 basis-1/5 sm:basis-full">
         <div className="flex gap-3 max-w-fit items-center">
           <Link
             className="flex justify-start items-center gap-1 text-foreground"
             href="/"
           >
-            <LogoIcon width={24} />
-            <p className="font-bold text-inherit">ACME</p>
+            <LogoIcon width={20} className="text-brand-indigo" />
+            <p className="font-signature text-primary-text uppercase tracking-widest text-sm">ACME</p>
           </Link>
         </div>
         <div className="hidden lg:flex gap-4 justify-start ml-2">
@@ -49,8 +49,8 @@ export const Navbar = () => {
             <div key={item.href}>
               <Link
                 className={clsx(
-                  "hover:text-primary transition-colors text-foreground",
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
+                  "hover:text-primary-text transition-all text-tertiary-text text-sm font-signature",
+                  "data-[active=true]:text-primary-text data-[active=true]:font-signature",
                 )}
                 href={item.href}
               >
@@ -79,10 +79,10 @@ export const Navbar = () => {
         <div className="hidden lg:flex min-w-64">{searchInput}</div>
         <div className="hidden md:flex">
           <Link
-            className="text-sm font-normal text-default-600 bg-default-100 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-default-200 transition"
+            className="text-xs font-signature text-primary-text bg-white/5 px-4 py-2 rounded-lg flex items-center gap-2 border border-white/5 hover:bg-white/10 transition-all active:scale-95 shadow-none"
             href={siteConfig.links.sponsor}
           >
-            <Heart className="text-danger" />
+            <Heart className="text-brand-indigo" width={14} />
             Sponsor
           </Link>
         </div>
