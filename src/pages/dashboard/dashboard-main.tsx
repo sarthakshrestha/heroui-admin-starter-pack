@@ -9,6 +9,7 @@ import {
   TextField,
   InputGroup,
   Dropdown,
+  Label,
 } from "@heroui/react";
 import {
   Magnifier,
@@ -99,22 +100,32 @@ export default function DashboardMain() {
             <Button isIconOnly variant="secondary" size="sm" className="text-tertiary-text rounded-pill hover:bg-foreground/5 border-divider/10 shadow-none h-9 w-9">
               <ArrowRotateRight width={16} />
             </Button>
-            <Dropdown>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="flex items-center gap-2 bg-transparent rounded-pill px-4 border border-divider/10 h-9 transition-all hover:bg-foreground/5 text-secondary-text font-interact shadow-none"
-              >
-                <Calendar width={14} className="text-tertiary-text" />
-                <span>Monthly</span>
-                <ChevronDown width={12} className="text-quaternary-text ml-1" />
-              </Button>
+            <Dropdown trigger="press">
+              <Dropdown.Trigger>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="flex items-center gap-2 bg-transparent rounded-pill px-4 border border-divider/10 h-9 transition-all hover:bg-foreground/5 text-secondary-text font-interact shadow-none"
+                >
+                  <Calendar width={14} className="text-tertiary-text" />
+                  <span>Monthly</span>
+                  <ChevronDown width={12} className="text-quaternary-text ml-1" />
+                </Button>
+              </Dropdown.Trigger>
               <Dropdown.Popover placement="bottom-start">
                 <Dropdown.Menu aria-label="Periods" className="bg-surface-card border border-divider/10 rounded-standard shadow-lg outline-none p-1 min-w-[140px]">
-                  <Dropdown.Item id="daily" className="font-interact text-xs rounded-md hover:bg-foreground/5 transition-colors px-3 py-2">Daily</Dropdown.Item>
-                  <Dropdown.Item id="weekly" className="font-interact text-xs rounded-md hover:bg-foreground/5 transition-colors px-3 py-2">Weekly</Dropdown.Item>
-                  <Dropdown.Item id="monthly" className="font-interact text-xs rounded-md hover:bg-foreground/10 transition-colors px-3 py-2 text-brand bg-brand-light/10">Monthly</Dropdown.Item>
-                  <Dropdown.Item id="yearly" className="font-interact text-xs rounded-md hover:bg-foreground/5 transition-colors px-3 py-2">Yearly</Dropdown.Item>
+                  <Dropdown.Item id="daily" textValue="Daily" className="font-interact text-xs rounded-md hover:bg-foreground/5 transition-colors px-3 py-2">
+                    <Label>Daily</Label>
+                  </Dropdown.Item>
+                  <Dropdown.Item id="weekly" textValue="Weekly" className="font-interact text-xs rounded-md hover:bg-foreground/5 transition-colors px-3 py-2">
+                    <Label>Weekly</Label>
+                  </Dropdown.Item>
+                  <Dropdown.Item id="monthly" textValue="Monthly" className="font-interact text-xs rounded-md hover:bg-foreground/10 transition-colors px-3 py-2 text-brand bg-brand-light/10">
+                    <Label>Monthly</Label>
+                  </Dropdown.Item>
+                  <Dropdown.Item id="yearly" textValue="Yearly" className="font-interact text-xs rounded-md hover:bg-foreground/5 transition-colors px-3 py-2">
+                    <Label>Yearly</Label>
+                  </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown.Popover>
             </Dropdown>
