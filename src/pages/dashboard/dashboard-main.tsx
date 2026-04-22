@@ -12,7 +12,6 @@ import {
 } from "@heroui/react";
 import {
   Magnifier,
-  Bell,
   ArrowRotateRight,
   Calendar,
   ChevronDown,
@@ -83,14 +82,22 @@ export default function DashboardMain() {
             aria-label="Dashboard views"
             selectedKey={selectedTab}
             onSelectionChange={(key) => setSelectedTab(key as string)}
-            variant="primary"
-            className="border-none"
+            className="max-w-xs"
           >
             <Tabs.ListContainer>
               <Tabs.List className="gap-8 px-0 border-none bg-transparent">
-                <Tabs.Tab key="overview" id="overview" className="px-0 pt-0 pb-4 text-sm font-interact tracking-tight data-[selected=true]:text-brand data-[selected=true]:border-b-2 data-[selected=true]:border-brand rounded-none">Overview</Tabs.Tab>
-                <Tabs.Tab key="sales" id="sales" className="px-0 pt-0 pb-4 text-sm font-interact tracking-tight data-[selected=true]:text-brand data-[selected=true]:border-b-2 data-[selected=true]:border-brand rounded-none">Sales</Tabs.Tab>
-                <Tabs.Tab key="expenses" id="expenses" className="px-0 pt-0 pb-4 text-sm font-interact tracking-tight data-[selected=true]:text-brand data-[selected=true]:border-b-2 data-[selected=true]:border-brand rounded-none">Expenses</Tabs.Tab>
+                <Tabs.Tab key="overview" id="overview">
+                  Overview
+                  <Tabs.Indicator />
+                </Tabs.Tab>
+                <Tabs.Tab key="sales" id="sales">
+                  Sales
+                  <Tabs.Indicator />
+                </Tabs.Tab>
+                <Tabs.Tab key="expenses" id="expenses">
+                  Expenses
+                  <Tabs.Indicator />
+                </Tabs.Tab>
               </Tabs.List>
             </Tabs.ListContainer>
           </Tabs>
@@ -109,7 +116,7 @@ export default function DashboardMain() {
                 <span>Monthly</span>
                 <ChevronDown width={12} className="text-quaternary-text ml-1" />
               </Button>
-              <Dropdown.Popover placement="bottom-start">
+              <Dropdown.Popover placement="bottom start">
                 <Dropdown.Menu aria-label="Periods" className="bg-surface-card border border-divider/10 rounded-standard shadow-lg outline-none p-1 min-w-[140px]">
                   <Dropdown.Item id="daily" className="font-interact text-xs rounded-md hover:bg-foreground/5 transition-colors px-3 py-2">Daily</Dropdown.Item>
                   <Dropdown.Item id="weekly" className="font-interact text-xs rounded-md hover:bg-foreground/5 transition-colors px-3 py-2">Weekly</Dropdown.Item>
@@ -132,17 +139,17 @@ export default function DashboardMain() {
             { label: "Sales", value: "458", trend: "+3.3%", isPositive: true },
             { label: "Profit", value: "$203,133", trend: "+4.1%", isPositive: true },
           ].map((kpi, index) => (
-            <Card key={index} className="p-6 flex flex-col gap-4 rounded-standard border border-divider/5 bg-surface-card transition-all cursor-default shadow-card">
-              <span className="text-tertiary-text text-[11px] font-announce uppercase tracking-widest">{kpi.label}</span>
+            <Card key={index} className="p-8 flex flex-col gap-6 rounded-card border border-divider bg-surface-card transition-all cursor-default shadow-none hover:bg-surface-featured transition-colors">
+              <span className="text-tertiary-text text-[11px] font-display font-medium uppercase tracking-[0.1em]">{kpi.label}</span>
               <div className="flex items-center justify-between mt-auto">
-                <span className="text-2xl font-announce text-primary-text tracking-tight">{kpi.value}</span>
+                <span className="text-3xl font-display font-medium text-primary-text tracking-tight">{kpi.value}</span>
                 <Chip
                   size="sm"
-                  variant="soft"
-                  className={`font-interact h-6 px-2.5 text-[11px] rounded-pill border-none ${kpi.isPositive ? "bg-brand-light text-brand-deep" : "bg-red-50 text-red-600"}`}
+                  variant="flat"
+                  className={`font-display font-medium h-7 px-3 text-[11px] rounded-pill border-none ${kpi.isPositive ? "bg-revolut-teal/10 text-revolut-teal" : "bg-revolut-danger/10 text-revolut-danger"}`}
                 >
                   <div className="flex items-center gap-1">
-                    {kpi.isPositive ? <ArrowUpRight width={12} /> : <ArrowDownRight width={12} />}
+                    {kpi.isPositive ? <ArrowUpRight width={14} /> : <ArrowDownRight width={14} />}
                     {kpi.trend}
                   </div>
                 </Chip>
@@ -152,48 +159,48 @@ export default function DashboardMain() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="p-8 rounded-featured border border-divider/5 bg-surface-card shadow-card">
+          <Card className="p-8 rounded-card border border-divider bg-surface-card shadow-none">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-lg font-announce text-primary-text tracking-tight">Sales Performance</h3>
+              <h3 className="text-xl font-display font-medium text-primary-text tracking-tight">Sales Performance</h3>
               <Select
                 aria-label="Period select"
                 className="w-36"
                 selectedKey={salesPeriod}
                 onSelectionChange={(key) => setSalesPeriod(String(key))}
               >
-                <Select.Trigger className="bg-transparent rounded-pill border border-divider/10 h-9 px-4 text-xs font-interact text-secondary-text hover:text-primary-text hover:bg-surface-hover transition-all shadow-none">
+                <Select.Trigger className="bg-surface-featured rounded-pill border-none h-10 px-4 text-[13px] font-display font-medium text-secondary-text hover:text-primary-text transition-all shadow-none">
                   <Select.Value />
                   <Select.Indicator />
                 </Select.Trigger>
                 <Select.Popover>
-                  <ListBox className="bg-surface-card border border-divider/10 rounded-standard shadow-lg">
-                    <ListBox.Item id="last-week" className="rounded-md hover:bg-surface-hover transition-colors">Last week</ListBox.Item>
-                    <ListBox.Item id="last-2-weeks" className="rounded-md hover:bg-surface-hover transition-colors">Last 2 weeks</ListBox.Item>
-                    <ListBox.Item id="last-month" className="rounded-md hover:bg-surface-hover transition-colors">Last month</ListBox.Item>
+                  <ListBox className="bg-surface-card border border-divider/5 rounded-standard shadow-xl p-1">
+                    <ListBox.Item id="last-week" className="rounded-lg hover:bg-surface-featured transition-colors font-display font-medium text-sm px-3 py-2">Last week</ListBox.Item>
+                    <ListBox.Item id="last-2-weeks" className="rounded-lg hover:bg-surface-featured transition-colors font-display font-medium text-sm px-3 py-2">Last 2 weeks</ListBox.Item>
+                    <ListBox.Item id="last-month" className="rounded-lg hover:bg-surface-featured transition-colors font-display font-medium text-sm px-3 py-2">Last month</ListBox.Item>
                   </ListBox>
                 </Select.Popover>
               </Select>
             </div>
-            <div className="h-60 w-full">
+            <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={salesData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                  <CartesianGrid strokeDasharray="0" vertical={false} stroke="var(--color-chart-grid)" />
                   <XAxis
                     dataKey="name"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: "#666666", fontSize: 11, fontWeight: 500 }}
+                    tick={{ fill: "#8d969e", fontSize: 11, fontWeight: 500 }}
                     dy={10}
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: "#666666", fontSize: 11, fontWeight: 500 }}
+                    tick={{ fill: "#8d969e", fontSize: 11, fontWeight: 500 }}
                   />
-                  <RechartsTooltip cursor={{ fill: 'rgba(0,0,0,0.02)' }} content={<div className="bg-background border border-divider/10 p-3 rounded-lg shadow-xl text-xs font-interact" />} />
+                  <RechartsTooltip cursor={{ fill: 'rgba(0,0,0,0.01)' }} content={<div className="bg-background border border-divider/5 p-4 rounded-xl shadow-2xl text-[13px] font-display font-medium" />} />
                   <Bar
                     dataKey="value"
-                    fill="#18E299"
+                    fill="#494fdf"
                     radius={[4, 4, 0, 0]}
                     barSize={24}
                   />
@@ -202,57 +209,57 @@ export default function DashboardMain() {
             </div>
           </Card>
 
-          <Card className="p-8 rounded-featured border border-divider/5 bg-surface-card shadow-card">
+          <Card className="p-8 rounded-card border border-divider bg-surface-card shadow-none">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-lg font-announce text-primary-text tracking-tight">Traffic Source</h3>
+              <h3 className="text-xl font-display font-medium text-primary-text tracking-tight">Traffic Source</h3>
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-4 text-[11px] font-announce uppercase tracking-widest">
+                <div className="flex items-center gap-4 text-[10px] font-display font-medium uppercase tracking-[0.15em]">
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-brand" />
+                    <div className="w-2 h-2 rounded-full bg-revolut-blue" />
                     <span className="text-tertiary-text">Organic</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
+                    <div className="w-2 h-2 rounded-full bg-foreground" />
                     <span className="text-tertiary-text">Paid Ads</span>
                   </div>
                 </div>
-                <Button isIconOnly variant="secondary" size="sm" className="text-tertiary-text h-8 w-8 min-w-0 rounded-md hover:bg-surface-hover border-none shadow-none">
-                  <EllipsisVertical width={16} />
+                <Button isIconOnly variant="secondary" size="sm" className="text-tertiary-text h-8 w-8 min-w-0 rounded-pill hover:bg-surface-featured border-none shadow-none">
+                  <EllipsisVertical width={18} />
                 </Button>
               </div>
             </div>
-            <div className="h-60 w-full">
+            <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={trafficData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                  <CartesianGrid strokeDasharray="0" vertical={false} stroke="var(--color-chart-grid)" />
                   <XAxis
                     dataKey="name"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: "#666666", fontSize: 11, fontWeight: 500 }}
+                    tick={{ fill: "#8d969e", fontSize: 11, fontWeight: 500 }}
                     dy={10}
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: "#666666", fontSize: 11, fontWeight: 500 }}
+                    tick={{ fill: "#8d969e", fontSize: 11, fontWeight: 500 }}
                   />
-                  <RechartsTooltip content={<div className="bg-background border border-divider/10 p-3 rounded-lg shadow-xl text-xs font-interact" />} />
+                  <RechartsTooltip content={<div className="bg-background border border-divider/5 p-4 rounded-xl shadow-2xl text-[13px] font-display font-medium" />} />
                   <Line
                     type="monotone"
                     dataKey="organic"
-                    stroke="#18E299"
-                    strokeWidth={3}
+                    stroke="#494fdf"
+                    strokeWidth={4}
                     dot={false}
-                    activeDot={{ r: 6, fill: '#18E299', stroke: '#fff', strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: '#494fdf', stroke: '#fff', strokeWidth: 2 }}
                   />
                   <Line
                     type="monotone"
                     dataKey="paid"
-                    stroke="#0d0d0d"
-                    strokeWidth={3}
+                    stroke="#191c1f"
+                    strokeWidth={4}
                     dot={false}
-                    activeDot={{ r: 6, fill: '#0d0d0d', stroke: '#fff', strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: '#191c1f', stroke: '#fff', strokeWidth: 2 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -268,27 +275,27 @@ export default function DashboardMain() {
           </div>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <Button variant="secondary" size="sm" className="gap-2 bg-transparent rounded-pill px-4 h-9 font-interact text-secondary-text border border-divider/10 hover:bg-surface-hover hover:text-primary-text transition-all shadow-none">
-                <Funnel width={14} />
+              <Button variant="secondary" size="sm" className="gap-2 bg-surface-featured rounded-pill px-5 h-10 font-display font-medium text-[13px] text-secondary-text border-none hover:text-primary-text transition-all shadow-none">
+                <Funnel width={16} />
                 Filter
               </Button>
-              <Button variant="secondary" size="sm" className="gap-2 bg-transparent rounded-pill px-4 h-9 font-interact text-secondary-text border border-divider/10 hover:bg-surface-hover hover:text-primary-text transition-all shadow-none">
-                <BarsDescendingAlignLeft width={14} />
+              <Button variant="secondary" size="sm" className="gap-2 bg-surface-featured rounded-pill px-5 h-10 font-display font-medium text-[13px] text-secondary-text border-none hover:text-primary-text transition-all shadow-none">
+                <BarsDescendingAlignLeft width={16} />
                 Sort
               </Button>
             </div>
-            <div className="w-full sm:w-auto sm:min-w-[280px]">
+            <div className="w-full sm:w-auto sm:min-w-[320px]">
               <TextField aria-label="Search employees" className="w-full">
-                <InputGroup className="bg-transparent rounded-pill border border-divider/10 shadow-none h-10 group focus-within:border-brand/40 transition-all">
-                  <InputGroup.Prefix className="pl-4">
-                    <Magnifier className="text-quaternary-text group-focus-within:text-brand" width={16} />
+                <InputGroup className="bg-surface-featured rounded-pill border-none shadow-none h-11 group transition-all">
+                  <InputGroup.Prefix className="pl-5">
+                    <Magnifier className="text-tertiary-text group-focus-within:text-revolut-blue" width={18} />
                   </InputGroup.Prefix>
-                  <InputGroup.Input placeholder="Search team members..." className="text-sm font-read text-primary-text placeholder:text-quaternary-text" />
+                  <InputGroup.Input placeholder="Search team members..." className="text-sm font-sans font-normal text-primary-text placeholder:text-tertiary-text px-3" />
                 </InputGroup>
               </TextField>
             </div>
           </div>
-          <div className="rounded-featured border border-divider/5 bg-surface-card shadow-card overflow-hidden min-h-[400px]">
+          <div className="rounded-featured border border-divider bg-surface-card shadow-card overflow-hidden min-h-[400px]">
             <OrderTable />
           </div>
         </div>

@@ -1,31 +1,36 @@
 import { useTheme } from "@/hooks/use-theme";
-import { Icon } from "@iconify/react";
+import { Sun, Moon } from "@gravity-ui/icons";
 
 export default function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex items-center gap-1 bg-white/5 p-1 rounded-lg border border-white/5">
+    <div className="flex items-center p-1 bg-surface-featured rounded-pill w-fit border-none">
       <button
         aria-label="Light mode"
-        className={`p-1.5 rounded-md transition-all active:scale-95 ${
-          theme === "light" ? "bg-white/10 text-primary-text" : "text-quaternary-text hover:text-tertiary-text"
+        className={`flex items-center justify-center p-2.5 rounded-pill transition-all active:scale-95 ${
+          theme === "light" 
+            ? "bg-background text-primary-text shadow-sm" 
+            : "text-tertiary-text hover:text-secondary-text"
         }`}
         type="button"
         onClick={() => setTheme("light")}
       >
-        <Icon icon="lucide:sun" width={14} />
+        <Sun width={16} height={16} />
       </button>
       <button
         aria-label="Dark mode"
-        className={`p-1.5 rounded-md transition-all active:scale-95 ${
-          theme === "dark" ? "bg-white/10 text-primary-text" : "text-quaternary-text hover:text-tertiary-text"
+        className={`flex items-center justify-center p-2.5 rounded-pill transition-all active:scale-95 ${
+          theme === "dark" 
+            ? "bg-background text-primary-text shadow-sm" 
+            : "text-tertiary-text hover:text-secondary-text"
         }`}
         type="button"
         onClick={() => setTheme("dark")}
       >
-        <Icon icon="lucide:moon" width={14} />
+        <Moon width={16} height={16} />
       </button>
     </div>
   );
 }
+

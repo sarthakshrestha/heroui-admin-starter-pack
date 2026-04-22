@@ -1,4 +1,4 @@
-import { Card } from "@heroui/react";
+import { Card, Chip } from "@heroui/react";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { ArrowUpRight, ArrowDownRight } from "@gravity-ui/icons";
 
@@ -18,16 +18,8 @@ const KpiCards = () => {
       change: 32,
       isPositive: true,
       data: [
-        { value: 20 },
-        { value: 25 },
-        { value: 22 },
-        { value: 28 },
-        { value: 24 },
-        { value: 30 },
-        { value: 28 },
-        { value: 32 },
-        { value: 30 },
-        { value: 35 },
+        { value: 20 }, { value: 25 }, { value: 22 }, { value: 28 }, { value: 24 },
+        { value: 30 }, { value: 28 }, { value: 32 }, { value: 30 }, { value: 35 },
       ],
     },
     {
@@ -36,16 +28,8 @@ const KpiCards = () => {
       change: 3,
       isPositive: false,
       data: [
-        { value: 30 },
-        { value: 28 },
-        { value: 25 },
-        { value: 27 },
-        { value: 24 },
-        { value: 22 },
-        { value: 23 },
-        { value: 21 },
-        { value: 20 },
-        { value: 19 },
+        { value: 30 }, { value: 28 }, { value: 25 }, { value: 27 }, { value: 24 },
+        { value: 22 }, { value: 23 }, { value: 21 }, { value: 20 }, { value: 19 },
       ],
     },
     {
@@ -54,16 +38,8 @@ const KpiCards = () => {
       change: 3,
       isPositive: false,
       data: [
-        { value: 28 },
-        { value: 26 },
-        { value: 24 },
-        { value: 25 },
-        { value: 23 },
-        { value: 21 },
-        { value: 22 },
-        { value: 20 },
-        { value: 19 },
-        { value: 18 },
+        { value: 28 }, { value: 26 }, { value: 24 }, { value: 25 }, { value: 23 },
+        { value: 21 }, { value: 22 }, { value: 20 }, { value: 19 }, { value: 18 },
       ],
     },
     {
@@ -72,57 +48,45 @@ const KpiCards = () => {
       change: 7,
       isPositive: true,
       data: [
-        { value: 22 },
-        { value: 24 },
-        { value: 26 },
-        { value: 25 },
-        { value: 28 },
-        { value: 30 },
-        { value: 29 },
-        { value: 32 },
-        { value: 34 },
-        { value: 36 },
+        { value: 22 }, { value: 24 }, { value: 26 }, { value: 25 }, { value: 28 },
+        { value: 30 }, { value: 29 }, { value: 32 }, { value: 34 }, { value: 36 },
       ],
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 my-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 my-6 md:grid-cols-2 lg:grid-cols-4">
       {kpiData.map((kpi, index) => (
-        <Card key={index} className="bg-white/2 border-white/8 shadow-none backdrop-blur-sm rounded-xl overflow-hidden group hover:bg-white/4 transition-colors">
+        <Card key={index} className="bg-surface-card border border-divider/5 shadow-none rounded-card overflow-hidden group hover:bg-surface-featured transition-colors">
           <Card.Content className="p-0">
-            <div className="p-4 pt-2 pb-2 flex flex-col gap-1">
-              {/* Header */}
-              <div className="flex flex-col gap-2">
-                <p className="font-signature text-tertiary-text text-[13px] tracking-tight">{kpi.title}</p>
-                <h2 className="font-signature text-3xl tracking-tight text-primary-text">
+            <div className="p-6 pb-2 flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <p className="font-display font-medium text-tertiary-text text-[11px] uppercase tracking-[0.1em]">{kpi.title}</p>
+                <h2 className="font-display font-medium text-3xl tracking-tight text-primary-text">
                   {kpi.value.toLocaleString()}
                 </h2>
               </div>
-              {/* Change Indicator */}
-              <div className="flex items-center gap-1 mt-4">
-                <span
-                  className={`flex items-center gap-1 font-signature text-[12px] ${kpi.isPositive ? "text-emerald-500" : "text-red-500"
-                    }`}
+              <div className="flex items-center gap-1">
+                <Chip
+                  size="sm"
+                  variant="flat"
+                  className={`font-display font-medium h-6 px-2.5 text-[11px] rounded-pill border-none ${kpi.isPositive ? "bg-revolut-teal/10 text-revolut-teal" : "bg-revolut-danger/10 text-revolut-danger"}`}
                 >
-                  {kpi.isPositive ? "+" : "-"}{kpi.change}%
-                  {kpi.isPositive ? (
-                    <ArrowUpRight width={16} />
-                  ) : (
-                    <ArrowDownRight width={16} />
-                  )}
-                </span>
+                  <div className="flex items-center gap-1">
+                    {kpi.isPositive ? <ArrowUpRight width={14} /> : <ArrowDownRight width={14} />}
+                    {kpi.isPositive ? "+" : "-"}{kpi.change}%
+                  </div>
+                </Chip>
               </div>
             </div>
-            {/* Chart outside the padded div */}
-            <div className="h-16 w-full">
+            <div className="h-16 w-full mt-2">
               <ResponsiveContainer height="100%" width="100%">
                 <LineChart data={kpi.data}>
                   <Line
                     dataKey="value"
                     dot={false}
-                    stroke={kpi.isPositive ? "#10b981" : "#ef4444"}
-                    strokeWidth={1.5}
+                    stroke={kpi.isPositive ? "#00a87e" : "#e23b4a"}
+                    strokeWidth={2}
                     type="monotone"
                   />
                 </LineChart>
@@ -134,5 +98,6 @@ const KpiCards = () => {
     </div>
   );
 };
+
 
 export default KpiCards;
